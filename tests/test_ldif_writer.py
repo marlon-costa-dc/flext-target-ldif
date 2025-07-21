@@ -142,7 +142,9 @@ class TestLDIFWriter:
     def test_write_single_record(self) -> None:
         """Test writing a single record to LDIF."""
         with tempfile.NamedTemporaryFile(
-            encoding="utf-8", mode="w+", delete=False,
+            encoding="utf-8",
+            mode="w+",
+            delete=False,
         ) as temp_file:
             temp_path = Path(temp_file.name)
 
@@ -193,7 +195,9 @@ class TestLDIFWriter:
     def test_multiple_records(self) -> None:
         """Test writing multiple records."""
         with tempfile.NamedTemporaryFile(
-            encoding="utf-8", mode="w+", delete=False,
+            encoding="utf-8",
+            mode="w+",
+            delete=False,
         ) as temp_file:
             temp_path = Path(temp_file.name)
 
