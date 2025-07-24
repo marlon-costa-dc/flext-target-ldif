@@ -16,8 +16,25 @@ import importlib.metadata
 import warnings
 
 # Import from flext-core for foundational patterns
-from flext_core import BaseConfig, DomainBaseModel
-from flext_core.domain.shared_types import ServiceResult
+# Foundation patterns from flext-core
+# 🚨 ARCHITECTURAL COMPLIANCE: Using DI container
+from flext_target_ldif.infrastructure.di_container import (
+    get_base_config,
+    get_domain_entity,
+    get_field,
+    get_service_result,
+)
+
+ServiceResult = get_service_result()
+DomainEntity = get_domain_entity()
+Field = get_field()
+BaseConfig = get_base_config()
+
+# Aliases for public API
+LDIFBaseConfig = BaseConfig
+BaseModel = DomainEntity
+LDIFError = Exception
+ValidationError = ValueError
 
 try:
     __version__ = importlib.metadata.version("flext-target-ldif")
@@ -49,15 +66,6 @@ def _show_deprecation_warning(old_import: str, new_import: str) -> None:
 # ================================
 # SIMPLIFIED PUBLIC API EXPORTS
 # ================================
-
-# Foundation patterns - ALWAYS from flext-core
-from flext_core import (
-    BaseConfig as LDIFBaseConfig,  # Configuration base
-    DomainBaseModel as BaseModel,  # Base for LDIF models
-    DomainError as LDIFError,  # LDIF-specific errors
-    ServiceResult as ServiceResult,  # LDIF operation results
-    ValidationError as ValidationError,  # Validation errors
-)
 
 # Singer Target exports - simplified imports
 try:
