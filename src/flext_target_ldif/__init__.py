@@ -1,115 +1,39 @@
-"""FLEXT TARGET LDIF - Singer LDIF Output with simplified imports.
+"""FLEXT Target LDIF - Wrapper for flext-meltano consolidated implementation.
+
+CONSOLIDATION: This project is now a library wrapper that imports the real
+Singer/Meltano/DBT consolidated implementations from flext-meltano to eliminate
+code duplication across the FLEXT ecosystem.
+
+This follows the architectural principle:
+- flext-* projects are LIBRARIES, not services
+- tap/target/dbt/ext are Meltano plugins
+- Real implementations are in flext-meltano
 
 Copyright (c) 2025 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
-
-Version 0.7.0 - Singer LDIF Target with simplified public API:
-- All common imports available from root: from flext_target_ldif import TargetLDIF
-- Built on flext-core foundation for robust LDIF generation
-- Deprecation warnings for internal imports
 """
 
 from __future__ import annotations
 
-import contextlib
-import importlib.metadata
-import warnings
+# Import consolidated implementations from flext-meltano
+# MIGRATED: Singer SDK imports centralized via flext-meltano
+from flext_meltano.targets.ldif import TargetLDIF, TargetLDIFConfig
 
-# Import from flext-core for foundational patterns
-# Foundation patterns from flext-core
-# 🚨 ARCHITECTURAL COMPLIANCE: Using DI container
-from flext_target_ldif.infrastructure.di_container import (
-    get_base_config,
-    get_domain_entity,
-    get_field,
-    get_service_result,
-)
+# Backward compatibility aliases
+FlextTargetLDIF = TargetLDIF
+FlextTargetLDIFConfig = TargetLDIFConfig
+LDIFTarget = TargetLDIF
+TargetConfig = TargetLDIFConfig
 
-ServiceResult = get_service_result()
-DomainEntity = get_domain_entity()
-Field = get_field()
-BaseConfig = get_base_config()
-
-# Aliases for public API
-LDIFBaseConfig = BaseConfig
-BaseModel = DomainEntity
-LDIFError = Exception
-ValidationError = ValueError
-
-try:
-    __version__ = importlib.metadata.version("flext-target-ldif")
-except importlib.metadata.PackageNotFoundError:
-    __version__ = "0.7.0"
-
-__version_info__ = tuple(int(x) for x in __version__.split(".") if x.isdigit())
-
-
-class FlextTargetLDIFDeprecationWarning(DeprecationWarning):
-    """Custom deprecation warning for FLEXT TARGET LDIF import changes."""
-
-
-def _show_deprecation_warning(old_import: str, new_import: str) -> None:
-    """Show deprecation warning for import paths."""
-    message_parts = [
-        f"⚠️  DEPRECATED IMPORT: {old_import}",
-        f"✅ USE INSTEAD: {new_import}",
-        "🔗 This will be removed in version 1.0.0",
-        "📖 See FLEXT TARGET LDIF docs for migration guide",
-    ]
-    warnings.warn(
-        "\n".join(message_parts),
-        FlextTargetLDIFDeprecationWarning,
-        stacklevel=3,
-    )
-
-
-# ================================
-# SIMPLIFIED PUBLIC API EXPORTS
-# ================================
-
-# Singer Target exports - simplified imports
-try:
-    from flext_target_ldif.target import TargetLDIF
-except ImportError:
-    # Target not yet fully refactored - provide placeholder
-    TargetLDIF = None
-
-# LDIF Writer exports - simplified imports
-with contextlib.suppress(ImportError):
-    from flext_target_ldif.ldif_writer import LDIFWriter
-
-# LDIF Sinks exports - simplified imports
-with contextlib.suppress(ImportError):
-    from flext_target_ldif.sinks import LDIFSink
-
-# LDIF Transformers exports - simplified imports
-with contextlib.suppress(ImportError):
-    from flext_target_ldif.transformers import (
-        LDIFTransformer,
-        RecordTransformer,
-    )
-
-# ================================
-# PUBLIC API EXPORTS
-# ================================
+__version__ = "0.8.0-wrapper"
 
 __all__ = [
-    "BaseModel",  # from flext_target_ldif import BaseModel
-    # Deprecation utilities
-    "FlextTargetLDIFDeprecationWarning",
-    # Core Patterns (from flext-core)
-    "LDIFBaseConfig",  # from flext_target_ldif import LDIFBaseConfig
-    "LDIFError",  # from flext_target_ldif import LDIFError
-    # LDIF Components (simplified access)
-    "LDIFSink",  # from flext_target_ldif import LDIFSink
-    "LDIFTransformer",  # from flext_target_ldif import LDIFTransformer
-    "LDIFWriter",  # from flext_target_ldif import LDIFWriter
-    "RecordTransformer",  # from flext_target_ldif import RecordTransformer
-    "ServiceResult",  # from flext_target_ldif import ServiceResult
-    # Main Singer Target (simplified access)
-    "TargetLDIF",  # from flext_target_ldif import TargetLDIF
-    "ValidationError",  # from flext_target_ldif import ValidationError
-    # Version
+    # Backward compatibility
+    "FlextTargetLDIF",
+    "FlextTargetLDIFConfig",
+    "LDIFTarget",
+    "TargetConfig",
+    "TargetLDIF",
+    "TargetLDIFConfig",
     "__version__",
-    "__version_info__",
 ]

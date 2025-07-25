@@ -1,35 +1,67 @@
-# FLEXT TARGET LDIF - Singer Target for LDIF Format Generation
-# =============================================================
-# Enterprise Singer target for LDIF (LDAP Data Interchange Format) output
-# Python 3.13 + Singer SDK + LDIF RFC 2849 + Zero Tolerance Quality Gates
+# FLEXT Target LDIF - LDIF File Singer Target
+# ==========================================
+# Enterprise-grade Singer target for LDIF file data export
+# Python 3.13 + Singer SDK + LDIF + FLEXT Core + Zero Tolerance Quality Gates
 
-.PHONY: help check validate test lint type-check security format format-check fix
+.PHONY: help info diagnose check validate test lint type-check security format format-check fix
 .PHONY: install dev-install setup pre-commit build clean
 .PHONY: coverage coverage-html test-unit test-integration test-singer
 .PHONY: deps-update deps-audit deps-tree deps-outdated
-.PHONY: target-test target-validate target-run singer-spec
-.PHONY: ldif-validate ldif-format-test ldif-performance
+.PHONY: sync validate-config target-test target-validate target-schema target-run
+.PHONY: ldif-write ldif-validate-output ldif-format-check
 
 # ============================================================================
 # 🎯 HELP & INFORMATION
 # ============================================================================
 
 help: ## Show this help message
-	@echo "🎯 FLEXT TARGET LDIF - Singer Target for LDIF Format Generation"
-	@echo "============================================================="
-	@echo "🎯 Singer SDK + LDIF RFC 2849 + Python 3.13"
+	@echo "🎯 FLEXT Target LDIF - LDIF File Singer Target"
+	@echo "============================================="
+	@echo "🎯 Singer SDK + LDIF + FLEXT Core + Python 3.13"
 	@echo ""
-	@echo "📦 Enterprise Singer target for LDIF (LDAP Data Interchange Format) output"
-	@echo "🔒 Zero tolerance quality gates with comprehensive Singer testing"
-	@echo "🧪 90%+ test coverage requirement with LDIF format compliance"
+	@echo "📦 Enterprise-grade LDIF file target for Singer protocol"
+	@echo "🔒 Zero tolerance quality gates with LDIF export"
+	@echo "🧪 90%+ test coverage requirement with LDIF integration testing"
 	@echo ""
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\\033[36m%-20s\\033[0m %s\\n", $$1, $$2}'
+
+
+info: ## Show project information
+	@echo "📊 Project Information"
+	@echo "======================"
+	@echo "Name: flext-target-ldif"
+	@echo "Type: singer-target"
+	@echo "Title: FLEXT TARGET LDIF"
+	@echo "Version: $(shell poetry version -s 2>/dev/null || echo "0.7.0")"
+	@echo "Python: $(shell python3.13 --version 2>/dev/null || echo "Not found")"
+	@echo "Poetry: $(shell poetry --version 2>/dev/null || echo "Not installed")"
+	@echo "Venv: $(shell poetry env info --path 2>/dev/null || echo "Not activated")"
+	@echo "Directory: $(CURDIR)"
+	@echo "Git Branch: $(shell git branch --show-current 2>/dev/null || echo "Not a git repo")"
+	@echo "Git Status: $(shell git status --porcelain 2>/dev/null | wc -l | xargs echo) files changed"
+
+diagnose: ## Run complete diagnostics
+	@echo "🔍 Running diagnostics for flext-target-ldif..."
+	@echo "System Information:"
+	@echo "OS: $(shell uname -s)"
+	@echo "Architecture: $(shell uname -m)"
+	@echo "Python: $(shell python3.13 --version 2>/dev/null || echo "Not found")"
+	@echo "Poetry: $(shell poetry --version 2>/dev/null || echo "Not installed")"
+	@echo ""
+	@echo "Project Structure:"
+	@ls -la
+	@echo ""
+	@echo "Poetry Configuration:"
+	@poetry config --list 2>/dev/null || echo "Poetry not configured"
+	@echo ""
+	@echo "Dependencies Status:"
+	@poetry show --outdated 2>/dev/null || echo "No outdated dependencies"
 
 # ============================================================================
 # 🎯 CORE QUALITY GATES - ZERO TOLERANCE
 # ============================================================================
 
-validate: lint type-check security test target-test ## STRICT compliance validation (all must pass)
+validate: lint type-check security test ## STRICT compliance validation (all must pass)
 	@echo "✅ ALL QUALITY GATES PASSED - FLEXT TARGET LDIF COMPLIANT"
 
 check: lint type-check test ## Essential quality checks (pre-commit standard)
@@ -86,20 +118,10 @@ test-integration: ## Run integration tests only
 	@poetry run pytest tests/integration/ -v
 	@echo "✅ Integration tests complete"
 
-test-singer: ## Run Singer-specific tests
+test-singer: ## Run Singer protocol tests
 	@echo "🧪 Running Singer protocol tests..."
-	@poetry run pytest tests/ -m "singer" -v
+	@poetry run pytest tests/singer/ -v
 	@echo "✅ Singer tests complete"
-
-test-ldif: ## Run LDIF-specific tests
-	@echo "🧪 Running LDIF format tests..."
-	@poetry run pytest tests/ -m "ldif" -v
-	@echo "✅ LDIF tests complete"
-
-test-performance: ## Run performance tests
-	@echo "⚡ Running Singer target performance tests..."
-	@poetry run pytest tests/performance/ -v --benchmark-only
-	@echo "✅ Performance tests complete"
 
 coverage: ## Generate detailed coverage report
 	@echo "📊 Generating coverage report..."
@@ -135,125 +157,117 @@ pre-commit: ## Setup pre-commit hooks
 	@echo "✅ Pre-commit hooks installed"
 
 # ============================================================================
-# 🎵 SINGER TARGET OPERATIONS - CORE FUNCTIONALITY
+# 🎯 SINGER TARGET OPERATIONS
 # ============================================================================
 
-target-test: ## Test Singer target functionality
-	@echo "🧪 Testing Singer target functionality..."
-	@poetry run python -c "from flext_target_ldif.target import TargetLDIF; from flext_target_ldif.sinks import LDIFSink; print('LDIF target loaded successfully')"
-	@echo "✅ Singer target test complete"
+sync: ## Sync data to LDIF target
+	@echo "🎯 Running LDIF data sync..."
+	@poetry run target-ldif --config $(TARGET_CONFIG) < $(TARGET_STATE)
+	@echo "✅ LDIF sync complete"
 
-target-validate: ## Validate Singer target configuration
-	@echo "🔍 Validating Singer target configuration..."
-	@poetry run python scripts/validate_target_config.py
-	@echo "✅ Singer target configuration validation complete"
+validate-config: ## Validate target configuration
+	@echo "🔍 Validating target configuration..."
+	@poetry run target-ldif --config $(TARGET_CONFIG) --validate-config
+	@echo "✅ Target configuration validated"
 
-target-run: ## Run Singer target with sample data
-	@echo "🎵 Running Singer target with sample data..."
-	@poetry run flext-target-ldif --config config.json < sample_data/sample.jsonl
-	@echo "✅ Singer target execution complete"
+target-test: ## Test LDIF target functionality
+	@echo "🎯 Testing LDIF target functionality..."
+	@poetry run target-ldif --about
+	@poetry run target-ldif --version
+	@echo "✅ Target test complete"
 
-target-schema: ## Test Singer target schema handling
-	@echo "📋 Testing Singer target schema handling..."
-	@poetry run python scripts/test_schema_handling.py
-	@echo "✅ Schema handling test complete"
+target-validate: ## Validate target configuration
+	@echo "🔍 Validating target configuration..."
+	@poetry run target-ldif --config tests/fixtures/config/target_config.json --validate-config
+	@echo "✅ Target configuration validated"
 
-target-state: ## Test Singer target state management
-	@echo "📊 Testing Singer target state management..."
-	@poetry run python scripts/test_state_management.py
-	@echo "✅ State management test complete"
+target-schema: ## Validate LDIF schema
+	@echo "🔍 Validating LDIF schema..."
+	@poetry run target-ldif --config tests/fixtures/config/target_config.json --validate-schema
+	@echo "✅ LDIF schema validated"
+
+target-run: ## Run LDIF data export
+	@echo "🎯 Running LDIF data export..."
+	@poetry run target-ldif --config tests/fixtures/config/target_config.json < tests/fixtures/data/sample_input.jsonl
+	@echo "✅ LDIF data export complete"
+
+target-run-debug: ## Run LDIF target with debug logging
+	@echo "🎯 Running LDIF target with debug..."
+	@poetry run target-ldif --config tests/fixtures/config/target_config.json --log-level DEBUG < tests/fixtures/data/sample_input.jsonl
+	@echo "✅ LDIF debug run complete"
+
+target-dry-run: ## Run LDIF target in dry-run mode
+	@echo "🎯 Running LDIF target dry-run..."
+	@poetry run target-ldif --config tests/fixtures/config/target_config.json --dry-run < tests/fixtures/data/sample_input.jsonl
+	@echo "✅ LDIF dry-run complete"
 
 # ============================================================================
-# 📁 LDIF FORMAT OPERATIONS
+# 📄 LDIF-SPECIFIC OPERATIONS
 # ============================================================================
 
-ldif-validate: ## Validate LDIF output format compliance
-	@echo "📁 Validating LDIF output format..."
+ldif-write: ## Write data to LDIF file
+	@echo "📄 Writing data to LDIF file..."
+	@poetry run python -c "from flext_target_ldif.writer import LDIFWriter; import json; config = json.load(open('tests/fixtures/config/target_config.json')); writer = LDIFWriter(config); print('Testing LDIF write...'); result = writer.test_write(); print('✅ Write test passed!' if result.is_success else f'❌ Write test failed: {result.error}')"
+	@echo "✅ LDIF write complete"
+
+ldif-validate-output: ## Validate LDIF output format
+	@echo "📄 Validating LDIF output format..."
 	@poetry run python scripts/validate_ldif_output.py
-	@echo "✅ LDIF format validation complete"
+	@echo "✅ LDIF output validation complete"
 
-ldif-format-test: ## Test LDIF format generation
-	@echo "📋 Testing LDIF format generation..."
-	@poetry run python scripts/test_ldif_generation.py
-	@echo "✅ LDIF format test complete"
+ldif-format-check: ## Check LDIF format compliance
+	@echo "📄 Checking LDIF format compliance..."
+	@poetry run python -c "from flext_target_ldif.validator import LDIFValidator; validator = LDIFValidator(); print('Testing LDIF format...'); result = validator.validate_file('output.ldif'); print('✅ Format valid!' if result.is_valid else f'❌ Format invalid: {result.errors}')"
+	@echo "✅ LDIF format check complete"
 
-ldif-performance: ## Run LDIF performance benchmarks
-	@echo "⚡ Running LDIF performance benchmarks..."
-	@poetry run python scripts/benchmark_ldif_performance.py
-	@echo "✅ LDIF performance benchmarks complete"
+ldif-export-users: ## Export user data to LDIF
+	@echo "📄 Exporting user data to LDIF..."
+	@poetry run target-ldif --config tests/fixtures/config/target_config.json < tests/fixtures/data/users.jsonl
+	@echo "✅ User data export complete"
 
-ldif-encoding-test: ## Test LDIF encoding handling
-	@echo "🔤 Testing LDIF encoding handling..."
-	@poetry run python scripts/test_ldif_encoding.py
-	@echo "✅ LDIF encoding test complete"
+ldif-export-groups: ## Export group data to LDIF
+	@echo "📄 Exporting group data to LDIF..."
+	@poetry run target-ldif --config tests/fixtures/config/target_config.json < tests/fixtures/data/groups.jsonl
+	@echo "✅ Group data export complete"
 
-ldif-dn-generation: ## Test DN generation patterns
-	@echo "🎯 Testing DN generation patterns..."
-	@poetry run python scripts/test_dn_generation.py
-	@echo "✅ DN generation test complete"
+ldif-merge: ## Merge multiple LDIF files
+	@echo "📄 Merging LDIF files..."
+	@poetry run python scripts/merge_ldif_files.py
+	@echo "✅ LDIF merge complete"
 
-ldif-attribute-mapping: ## Test attribute mapping functionality
-	@echo "🗺️ Testing attribute mapping..."
-	@poetry run python scripts/test_attribute_mapping.py
-	@echo "✅ Attribute mapping test complete"
+ldif-split: ## Split LDIF file by entry type
+	@echo "📄 Splitting LDIF file by entry type..."
+	@poetry run python scripts/split_ldif_by_type.py
+	@echo "✅ LDIF split complete"
 
-ldif-line-wrapping: ## Test LDIF line wrapping compliance
-	@echo "📝 Testing LDIF line wrapping..."
-	@poetry run python scripts/test_line_wrapping.py
-	@echo "✅ Line wrapping test complete"
-
-# ============================================================================
-# 🎵 SINGER PROTOCOL COMPLIANCE
-# ============================================================================
-
-singer-spec: ## Validate Singer specification compliance
-	@echo "🎵 Validating Singer specification compliance..."
-	@poetry run python scripts/validate_singer_spec.py
-	@echo "✅ Singer specification validation complete"
-
-singer-messages: ## Test Singer message handling
-	@echo "📬 Testing Singer message handling..."
-	@poetry run python scripts/test_singer_messages.py
-	@echo "✅ Singer message test complete"
-
-singer-catalog: ## Test Singer catalog handling
-	@echo "📋 Testing Singer catalog handling..."
-	@poetry run python scripts/test_singer_catalog.py
-	@echo "✅ Singer catalog test complete"
-
-singer-state: ## Test Singer state handling
-	@echo "📊 Testing Singer state handling..."
-	@poetry run python scripts/test_singer_state.py
-	@echo "✅ Singer state test complete"
-
-singer-records: ## Test Singer record processing
-	@echo "📄 Testing Singer record processing..."
-	@poetry run python scripts/test_singer_records.py
-	@echo "✅ Singer record test complete"
+ldif-clean: ## Clean and normalize LDIF output
+	@echo "📄 Cleaning and normalizing LDIF output..."
+	@poetry run python scripts/clean_ldif_output.py
+	@echo "✅ LDIF cleaning complete"
 
 # ============================================================================
-# 🔍 DATA QUALITY & VALIDATION
+# 🔍 FILE VALIDATION
 # ============================================================================
 
-validate-ldif-rfc: ## Validate LDIF RFC 2849 compliance
-	@echo "🔍 Validating LDIF RFC 2849 compliance..."
-	@poetry run python scripts/validate_ldif_rfc.py
-	@echo "✅ LDIF RFC compliance validation complete"
+validate-output: ## Validate generated LDIF files
+	@echo "🔍 Validating generated LDIF files..."
+	@poetry run python scripts/validate_ldif_files.py
+	@echo "✅ LDIF file validation complete"
 
-validate-dn-format: ## Validate DN format compliance
-	@echo "🔍 Validating DN format compliance..."
+validate-encoding: ## Validate LDIF file encoding
+	@echo "🔍 Validating LDIF file encoding..."
+	@poetry run python scripts/validate_encoding.py
+	@echo "✅ Encoding validation complete"
+
+validate-schema: ## Validate LDIF schema compliance
+	@echo "🔍 Validating LDIF schema compliance..."
+	@poetry run python scripts/validate_schema_compliance.py
+	@echo "✅ Schema validation complete"
+
+validate-dn: ## Validate DN format in LDIF
+	@echo "🔍 Validating DN format in LDIF..."
 	@poetry run python scripts/validate_dn_format.py
-	@echo "✅ DN format validation complete"
-
-validate-attribute-encoding: ## Validate attribute encoding
-	@echo "🔍 Validating attribute encoding..."
-	@poetry run python scripts/validate_attribute_encoding.py
-	@echo "✅ Attribute encoding validation complete"
-
-data-quality-report: ## Generate comprehensive data quality report
-	@echo "📊 Generating data quality report..."
-	@poetry run python scripts/generate_quality_report.py
-	@echo "✅ Data quality report generated"
+	@echo "✅ DN validation complete"
 
 # ============================================================================
 # 📦 BUILD & DISTRIBUTION
@@ -263,17 +277,6 @@ build: clean ## Build distribution packages
 	@echo "🔨 Building distribution..."
 	@poetry build
 	@echo "✅ Build complete - packages in dist/"
-
-package: build ## Create deployment package
-	@echo "📦 Creating deployment package..."
-	@tar -czf dist/flext-target-ldif-deployment.tar.gz \
-		src/ \
-		tests/ \
-		scripts/ \
-		pyproject.toml \
-		README.md \
-		CLAUDE.md
-	@echo "✅ Deployment package created: dist/flext-target-ldif-deployment.tar.gz"
 
 # ============================================================================
 # 🧹 CLEANUP
@@ -286,13 +289,12 @@ clean: ## Remove all artifacts
 	@rm -rf *.egg-info/
 	@rm -rf .coverage
 	@rm -rf htmlcov/
-	@rm -rf .pytest_cache/
-	@rm -rf .mypy_cache/
-	@rm -rf .ruff_cache/
 	@rm -rf output/
-	@rm -f *.ldif
-	@rm -f state.json
+	@rm -rf *.ldif
 	@find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+	@find . -type d -name ".pytest_cache" -exec rm -rf {} + 2>/dev/null || true
+	@find . -type d -name ".mypy_cache" -exec rm -rf {} + 2>/dev/null || true
+	@find . -type d -name ".ruff_cache" -exec rm -rf {} + 2>/dev/null || true
 	@find . -type f -name "*.pyc" -delete 2>/dev/null || true
 	@echo "✅ Cleanup complete"
 
@@ -328,34 +330,25 @@ export PYTHONPATH := $(PWD)/src:$(PYTHONPATH)
 export PYTHONDONTWRITEBYTECODE := 1
 export PYTHONUNBUFFERED := 1
 
-# LDIF Target settings
-export FLEXT_TARGET_LDIF_OUTPUT_PATH := ./output
-export FLEXT_TARGET_LDIF_DEBUG := false
-export FLEXT_TARGET_LDIF_CONFIG := ./config.json
-
-# LDIF format settings
-export FLEXT_TARGET_LDIF_LINE_LENGTH := 78
-export FLEXT_TARGET_LDIF_BASE64_ENCODE := false
-export FLEXT_TARGET_LDIF_INCLUDE_TIMESTAMPS := true
-
-# DN generation settings
-export FLEXT_TARGET_LDIF_DN_TEMPLATE := cn={name},ou=users,dc=example,dc=com
-export FLEXT_TARGET_LDIF_DN_ATTRIBUTE := cn
-
-# File output settings
-export FLEXT_TARGET_LDIF_FILE_PATTERN := output_{timestamp}.ldif
-export FLEXT_TARGET_LDIF_MAX_FILE_SIZE := 10485760
-export FLEXT_TARGET_LDIF_COMPRESSION := false
-
-# Performance settings
-export FLEXT_TARGET_LDIF_BATCH_SIZE := 1000
-export FLEXT_TARGET_LDIF_BUFFER_SIZE := 8192
-export FLEXT_TARGET_LDIF_FLUSH_INTERVAL := 5
+# Target settings
+TARGET_CONFIG := config.json
+TARGET_STATE := state.json
 
 # Singer settings
-export SINGER_SDK_LOG_LEVEL := INFO
-export SINGER_SDK_BATCH_SIZE := 1000
-export SINGER_SDK_MAX_RECORD_AGE_IN_MINUTES := 5
+export SINGER_LOG_LEVEL := INFO
+export SINGER_BATCH_SIZE := 100
+export SINGER_MAX_BATCH_AGE := 300
+
+# LDIF Target settings
+export TARGET_LDIF_OUTPUT_DIR := output
+export TARGET_LDIF_FILENAME := export.ldif
+export TARGET_LDIF_ENCODING := utf-8
+export TARGET_LDIF_LINE_LENGTH := 76
+
+# File settings
+export TARGET_LDIF_VALIDATE_FORMAT := true
+export TARGET_LDIF_INCLUDE_COMMENTS := false
+export TARGET_LDIF_SORT_ENTRIES := true
 
 # Poetry settings
 export POETRY_VENV_IN_PROJECT := false
@@ -371,34 +364,30 @@ export RUFF_CACHE_DIR := .ruff_cache
 
 # Project information
 PROJECT_NAME := flext-target-ldif
+PROJECT_TYPE := meltano-plugin
 PROJECT_VERSION := $(shell poetry version -s)
-PROJECT_DESCRIPTION := FLEXT TARGET LDIF - Singer Target for LDIF Format Generation
+PROJECT_DESCRIPTION := FLEXT Target LDIF - LDIF File Singer Target
 
 .DEFAULT_GOAL := help
 
 # ============================================================================
-# 🎯 DEVELOPMENT UTILITIES
+# 🎯 SINGER SPECIFIC COMMANDS
 # ============================================================================
 
-dev-target-server: ## Start development target server
-	@echo "🔧 Starting development target server..."
-	@poetry run python scripts/dev_target_server.py
-	@echo "✅ Development target server started"
+singer-about: ## Show Singer target about information
+	@echo "🎵 Singer target about information..."
+	@poetry run target-ldif --about
+	@echo "✅ About information displayed"
 
-dev-target-monitor: ## Monitor target operations
-	@echo "📊 Monitoring target operations..."
-	@poetry run python scripts/monitor_target_operations.py
-	@echo "✅ Target monitoring complete"
+singer-config-sample: ## Generate Singer config sample
+	@echo "🎵 Generating Singer config sample..."
+	@poetry run target-ldif --config-sample > config_sample.json
+	@echo "✅ Config sample generated: config_sample.json"
 
-dev-ldif-viewer: ## Interactive LDIF viewer
-	@echo "🎮 Starting LDIF viewer..."
-	@poetry run python scripts/ldif_viewer.py
-	@echo "✅ LDIF viewer session complete"
-
-dev-dn-generator: ## Interactive DN generator tool
-	@echo "🎯 Starting DN generator tool..."
-	@poetry run python scripts/dn_generator.py
-	@echo "✅ DN generator session complete"
+singer-test-streams: ## Test Singer streams
+	@echo "🎵 Testing Singer streams..."
+	@poetry run pytest tests/singer/test_streams.py -v
+	@echo "✅ Singer streams tests complete"
 
 # ============================================================================
 # 🎯 FLEXT ECOSYSTEM INTEGRATION
@@ -406,10 +395,10 @@ dev-dn-generator: ## Interactive DN generator tool
 
 ecosystem-check: ## Verify FLEXT ecosystem compatibility
 	@echo "🌐 Checking FLEXT ecosystem compatibility..."
-	@echo "📦 Core project: $(PROJECT_NAME) v$(PROJECT_VERSION)"
-	@echo "🏗️ Architecture: Singer Target + LDIF RFC 2849"
+	@echo "📦 Singer project: $(PROJECT_NAME) v$(PROJECT_VERSION)"
+	@echo "🏗️ Architecture: Singer Target + LDIF"
 	@echo "🐍 Python: 3.13"
-	@echo "🔗 Framework: FLEXT Core + Singer SDK + LDIF"
+	@echo "🔗 Framework: FLEXT Core + Singer SDK"
 	@echo "📊 Quality: Zero tolerance enforcement"
 	@echo "✅ Ecosystem compatibility verified"
 
@@ -417,77 +406,7 @@ workspace-info: ## Show workspace integration info
 	@echo "🏢 FLEXT Workspace Integration"
 	@echo "==============================="
 	@echo "📁 Project Path: $(PWD)"
-	@echo "🏆 Role: Singer Target for LDIF Format Generation"
-	@echo "🔗 Dependencies: flext-core, flext-observability, singer-sdk"
-	@echo "📦 Provides: LDIF file generation from Singer data streams"
-	@echo "🎯 Standards: Enterprise Singer target patterns with RFC 2849 compliance"
-
-# ============================================================================
-# 🔄 CONTINUOUS INTEGRATION
-# ============================================================================
-
-ci-check: validate ## CI quality checks
-	@echo "🔍 Running CI quality checks..."
-	@poetry run python scripts/ci_quality_report.py
-	@echo "✅ CI quality checks complete"
-
-ci-performance: ## CI performance benchmarks
-	@echo "⚡ Running CI performance benchmarks..."
-	@poetry run python scripts/ci_performance_benchmarks.py
-	@echo "✅ CI performance benchmarks complete"
-
-ci-integration: ## CI integration tests
-	@echo "🔗 Running CI integration tests..."
-	@poetry run pytest tests/integration/ -v --tb=short
-	@echo "✅ CI integration tests complete"
-
-ci-singer: ## CI Singer protocol tests
-	@echo "🎵 Running CI Singer tests..."
-	@poetry run pytest tests/ -m "singer" -v --tb=short
-	@echo "✅ CI Singer tests complete"
-
-ci-ldif: ## CI LDIF format tests
-	@echo "📁 Running CI LDIF tests..."
-	@poetry run pytest tests/ -m "ldif" -v --tb=short
-	@echo "✅ CI LDIF tests complete"
-
-ci-all: ci-check ci-performance ci-integration ci-singer ci-ldif ## Run all CI checks
-	@echo "✅ All CI checks complete"
-
-# ============================================================================
-# 🚀 PRODUCTION DEPLOYMENT
-# ============================================================================
-
-deploy-target: validate build ## Deploy target for production use
-	@echo "🚀 Deploying LDIF target..."
-	@poetry run python scripts/deploy_target.py
-	@echo "✅ LDIF target deployment complete"
-
-test-deployment: ## Test deployed target functionality
-	@echo "🧪 Testing deployed target..."
-	@poetry run python scripts/test_deployed_target.py
-	@echo "✅ Deployment test complete"
-
-rollback-deployment: ## Rollback target deployment
-	@echo "🔄 Rolling back target deployment..."
-	@poetry run python scripts/rollback_target_deployment.py
-	@echo "✅ Deployment rollback complete"
-
-# ============================================================================
-# 🔬 MONITORING & OBSERVABILITY
-# ============================================================================
-
-monitor-ldif-generation: ## Monitor LDIF generation performance
-	@echo "📊 Monitoring LDIF generation..."
-	@poetry run python scripts/monitor_ldif_generation.py
-	@echo "✅ LDIF generation monitoring complete"
-
-monitor-target-health: ## Monitor Singer target health
-	@echo "📊 Monitoring Singer target health..."
-	@poetry run python scripts/monitor_target_health.py
-	@echo "✅ Target health monitoring complete"
-
-generate-target-metrics: ## Generate target performance metrics
-	@echo "📊 Generating target performance metrics..."
-	@poetry run python scripts/generate_target_metrics.py
-	@echo "✅ Target metrics generated"
+	@echo "🏆 Role: LDIF File Singer Target"
+	@echo "🔗 Dependencies: flext-core, flext-ldif, singer-sdk"
+	@echo "📦 Provides: LDIF file export capabilities"
+	@echo "🎯 Standards: Enterprise LDIF format patterns"

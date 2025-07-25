@@ -1,11 +1,13 @@
 """Main Singer Target implementation for LDIF output."""
 
+# MIGRATED: Singer SDK imports centralized via flext-meltano
 from __future__ import annotations
 
 import typing as t
 from pathlib import Path
 
-from singer_sdk import Target, typing as th
+from flext_meltano import th
+from flext_meltano.singer import FlextMeltanoTarget as Target
 
 from flext_target_ldif.sinks import LDIFSink
 
@@ -13,9 +15,9 @@ from flext_target_ldif.sinks import LDIFSink
 class TargetLDIF(Target):
     """Singer target for writing data to LDIF format."""
 
-    name = "target-ldif"
+    name: str = "target-ldif"
 
-    config_jsonschema = th.PropertiesList(
+    config_jsonschema: t.ClassVar = th.PropertiesList(
         th.Property(
             "output_path",
             th.StringType,
@@ -54,7 +56,7 @@ class TargetLDIF(Target):
         ),
     ).to_dict()
 
-    default_sink_class = LDIFSink
+    default_sink_class: t.ClassVar = LDIFSink
 
     def __init__(
         self,

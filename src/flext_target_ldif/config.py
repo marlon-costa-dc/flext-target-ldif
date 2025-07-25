@@ -1,13 +1,22 @@
-"""Configuration utilities for FLEXT Target LDIF."""
+"""Configuration utilities for FLEXT Target LDIF - CONSOLIDATED.
+
+Uses flext-meltano common validation to eliminate duplication with tap-ldif.
+
+Copyright (c) 2025 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
 import typing as t
 from pathlib import Path
 
+# MIGRATED: Singer SDK imports centralized via flext-meltano
+from flext_meltano.common import validate_directory_path
+
 
 def validate_output_path(path: str) -> str:
-    """Validate and normalize output path."""
+    """Validate and normalize output path using consolidated patterns."""
     output_path = Path(path)
 
     # Check if path exists and is a file

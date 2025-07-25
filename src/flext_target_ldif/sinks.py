@@ -5,9 +5,10 @@ from __future__ import annotations
 import typing as t
 from pathlib import Path
 
-from singer_sdk.sinks import BatchSink
+# MIGRATED: BatchSink now consolidated in flext-meltano
+from flext_meltano import BatchSink
 
-from flext_target_ldif.ldif_writer import LDIFWriter
+from flext_target_ldif.writer import LdifWriter
 
 
 class LDIFSink(BatchSink):
@@ -23,7 +24,7 @@ class LDIFSink(BatchSink):
         """Initialize the LDIF sink."""
         super().__init__(target, stream_name, schema, key_properties)
 
-        self._ldif_writer: LDIFWriter | None = None
+        self._ldif_writer: LdifWriter | None = None
         self._output_file: Path | None = None
 
     def _get_output_file(self) -> Path:
@@ -43,11 +44,11 @@ class LDIFSink(BatchSink):
 
         return self._output_file
 
-    def _get_ldif_writer(self) -> LDIFWriter:
+    def _get_ldif_writer(self) -> LdifWriter:
         """Get or create the LDIF writer for this sink."""
         if self._ldif_writer is None:
             output_file = self._get_output_file()
-            self._ldif_writer = LDIFWriter(
+            self._ldif_writer = LdifWriter(
                 output_file=output_file,
                 ldif_options=self.config.get("ldif_options", {}),
                 dn_template=self.config.get("dn_template"),
@@ -69,16 +70,21 @@ class LDIFSink(BatchSink):
     ) -> None:
         """Process a single record and write to LDIF."""
         ldif_writer = self._get_ldif_writer()
-        ldif_writer.write_record(record)
+        result = ldif_writer.write_record(record)
+        if not result.is_success:
+            msg = f"Failed to write LDIF record: {result.error}"
+            raise RuntimeError(msg)
 
     def clean_up(self) -> None:
         """Clean up resources when sink is finished."""
         if self._ldif_writer:
-            self._ldif_writer.close()
-            if hasattr(self, "logger"):
+            result = self._ldif_writer.close()
+            if not result.is_success and hasattr(self, "logger"):
+                self.logger.error(f"Failed to close LDIF writer: {result.error}")
+            elif hasattr(self, "logger"):
                 self.logger.info(f"LDIF file written: {self._output_file}")
 
     @property
-    def ldif_writer(self) -> LDIFWriter:
+    def ldif_writer(self) -> LdifWriter:
         """Get the LDIF writer (for testing)."""
         return self._get_ldif_writer()
