@@ -12,7 +12,20 @@ import typing as t
 from pathlib import Path
 
 # MIGRATED: Singer SDK imports centralized via flext-meltano
-from flext_meltano.common import validate_directory_path
+# Note: validate_directory_path removed to fix import issues
+
+
+# Simple replacement for removed validation function
+def validate_directory_path(path: str) -> str:
+    """Basic directory path validation."""
+    dir_path = Path(path)
+    if not dir_path.exists():
+        msg = f"Directory path does not exist: {path}"
+        raise ValueError(msg)
+    if not dir_path.is_dir():
+        msg = f"Path is not a directory: {path}"
+        raise ValueError(msg)
+    return path
 
 
 def validate_output_path(path: str) -> str:

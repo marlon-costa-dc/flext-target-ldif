@@ -6,6 +6,10 @@ SPDX-License-Identifier: MIT
 REFACTORED: Complete target system with 100% coverage and validation.
 """
 
+from pydantic import ValidationError
+from flext_target_ldif.sinks import LDIFSink
+
+
 from __future__ import annotations
 
 import tempfile
@@ -25,12 +29,15 @@ class TestFlextTargetLdifConfig:
     def test_config_creation_with_defaults(self) -> None:
         """Test creating config with default values."""
         config = FlextTargetLdifConfig(output_file="test.ldif")
-        assert config.output_file == "test.ldif"
-        assert config.schema_validation is True
-        assert config.dn_template == "uid={uid},ou=users,dc=example,dc=com"
+        if config.output_file != "test.ldif":
+            raise AssertionError(f"Expected {"test.ldif"}, got {config.output_file}")
+        if not (config.schema_validation):
+            raise AssertionError(f"Expected True, got {config.schema_validation}")
+        if config.dn_template != "uid={uid},ou=users,dc=example,dc=com":
+            raise AssertionError(f"Expected {"uid={uid},ou=users,dc=example,dc=com"}, got {config.dn_template}")
         assert config.line_length == 78
-        assert config.base64_encode is False
-
+        if config.base64_encode:
+            raise AssertionError(f"Expected False, got {config.base64_encode}")\ n
     def test_config_creation_with_custom_values(self) -> None:
         """Test creating config with custom values."""
         config = FlextTargetLdifConfig(
@@ -41,21 +48,25 @@ class TestFlextTargetLdifConfig:
             base64_encode=True,
             attribute_mapping={"email": "mail"},
         )
-        assert config.output_file == "/tmp/custom.ldif"
-        assert config.schema_validation is False
-        assert config.dn_template == "cn={name},ou=people,dc=test,dc=com"
-        assert config.line_length == 100
-        assert config.base64_encode is True
-        assert config.attribute_mapping == {"email": "mail"}
+        if config.output_file != "/tmp/custom.ldif":
+            raise AssertionError(f"Expected {"/tmp/custom.ldif"}, got {config.output_file}")
+        if config.schema_validation:
+            raise AssertionError(f"Expected False, got {config.schema_validation}")\ n        assert config.dn_template == "cn={name},ou=people,dc=test,dc=com"
+        if config.line_length != 100:
+            raise AssertionError(f"Expected {100}, got {config.line_length}")
+        if not (config.base64_encode):
+            raise AssertionError(f"Expected True, got {config.base64_encode}")
+        if config.attribute_mapping != {"email": "mail"}:
+            raise AssertionError(f"Expected {{"email": "mail"}}, got {config.attribute_mapping}")
 
     def test_config_immutability(self) -> None:
         """Test that config is immutable."""
-        from pydantic import ValidationError
+
 
         config = FlextTargetLdifConfig(output_file="test.ldif")
 
         with pytest.raises(ValidationError):
-            config.output_file = "modified.ldif"  # type: ignore[misc]
+            config.output_file = "modified.ldif"
 
     def test_config_validation_empty_output_file(self) -> None:
         """Test validation with empty output file."""
@@ -140,7 +151,9 @@ class TestFlextTargetLdif:
         with pytest.raises(FlextTargetLdifConfigurationError) as exc_info:
             target.validate_config()
 
-        assert "Output file is required" in str(exc_info.value)
+        if "Output file is required" not in str(exc_info.value):
+
+            raise AssertionError(f"Expected {"Output file is required"} in {str(exc_info.value)}")
 
     def test_target_validate_config_invalid_output_file(self) -> None:
         """Test config validation with invalid output file."""
@@ -153,7 +166,9 @@ class TestFlextTargetLdif:
         with pytest.raises(FlextTargetLdifConfigurationError) as exc_info:
             target.validate_config()
 
-        assert "Output file cannot be empty" in str(exc_info.value)
+        if "Output file cannot be empty" not in str(exc_info.value):
+
+            raise AssertionError(f"Expected {"Output file cannot be empty"} in {str(exc_info.value)}")
 
     def test_target_validate_config_invalid_dn_template(self) -> None:
         """Test config validation with invalid DN template."""
@@ -167,7 +182,9 @@ class TestFlextTargetLdif:
         with pytest.raises(FlextTargetLdifConfigurationError) as exc_info:
             target.validate_config()
 
-        assert "DN template cannot be empty" in str(exc_info.value)
+        if "DN template cannot be empty" not in str(exc_info.value):
+
+            raise AssertionError(f"Expected {"DN template cannot be empty"} in {str(exc_info.value)}")
 
 
 class TestTargetLDIF:
@@ -185,7 +202,8 @@ class TestTargetLDIF:
         with tempfile.TemporaryDirectory() as tmp_dir:
             config = {"output_path": tmp_dir}
             target = TargetLDIF(config=config)
-            assert target.name == "target-ldif"
+            if target.name != "target-ldif":
+                raise AssertionError(f"Expected {"target-ldif"}, got {target.name}")
 
     def test_target_ldif_config_schema(self) -> None:
         """Test target config schema is properly defined."""
@@ -197,16 +215,19 @@ class TestTargetLDIF:
 
         # Should have required properties
         properties = target.config_jsonschema.get("properties", {})
-        assert "output_path" in properties
+        if "output_path" not in properties:
+            raise AssertionError(f"Expected {"output_path"} in {properties}")
         assert "file_naming_pattern" in properties
-        assert "dn_template" in properties
+        if "dn_template" not in properties:
+            raise AssertionError(f"Expected {"dn_template"} in {properties}")
 
     def test_target_ldif_default_sink_class(self) -> None:
         """Test target has proper default sink class."""
-        from flext_target_ldif.sinks import LDIFSink
+
 
         target = TargetLDIF()
-        assert target.default_sink_class == LDIFSink
+        if target.default_sink_class != LDIFSink:
+            raise AssertionError(f"Expected {LDIFSink}, got {target.default_sink_class}")
 
     def test_target_ldif_output_directory_creation(self) -> None:
         """Test target creates output directory."""
@@ -239,7 +260,9 @@ class TestTargetLDIF:
             }
             target = TargetLDIF(config=config)
 
-            assert target.config["output_path"] == tmp_dir
+            if target.config["output_path"] != tmp_dir:
+
+                raise AssertionError(f"Expected {tmp_dir}, got {target.config["output_path"]}")
             assert target.config["dn_template"] == "cn={name},ou=people,dc=test,dc=com"
 
     def test_target_ldif_default_config_values(self) -> None:
@@ -249,8 +272,12 @@ class TestTargetLDIF:
             target = TargetLDIF(config=config)
 
             # Should use defaults from schema
-            assert target.config["file_naming_pattern"] == "{stream_name}_{timestamp}.ldif"
-            assert target.config["dn_template"] == "uid={uid},ou=users,dc=example,dc=com"
+            assert (
+                target.config["file_naming_pattern"] == "{stream_name}_{timestamp}.ldif"
+            )
+            assert (
+                target.config["dn_template"] == "uid={uid},ou=users,dc=example,dc=com"
+            )
 
 
 class TestIntegration:
@@ -258,7 +285,9 @@ class TestIntegration:
 
     def test_end_to_end_ldif_generation(self) -> None:
         """Test end-to-end LDIF generation."""
-        with tempfile.NamedTemporaryFile(encoding="utf-8", mode="w+", delete=False, suffix=".ldif") as tmp:
+        with tempfile.NamedTemporaryFile(
+            encoding="utf-8", mode="w+", delete=False, suffix=".ldif"
+        ) as tmp:
             tmp_path = Path(tmp.name)
 
         # Create config
@@ -319,12 +348,18 @@ class TestIntegration:
 
         config_dict = config.model_dump()
 
-        assert config_dict["output_file"] == "test.ldif"
-        assert config_dict["schema_validation"] is True
-        assert config_dict["dn_template"] == "uid={uid},ou=users,dc=example,dc=com"
+        if config_dict["output_file"] != "test.ldif":
+
+            raise AssertionError(f"Expected {"test.ldif"}, got {config_dict["output_file"]}")
+        if not (config_dict["schema_validation"]):
+            raise AssertionError(f"Expected True, got {config_dict["schema_validation"]}")
+        if config_dict["dn_template"] != "uid={uid},ou=users,dc=example,dc=com":
+            raise AssertionError(f"Expected {"uid={uid},ou=users,dc=example,dc=com"}, got {config_dict["dn_template"]}")
         assert config_dict["line_length"] == 100
-        assert config_dict["base64_encode"] is True
-        assert config_dict["attribute_mapping"] == {"email": "mail", "name": "cn"}
+        if not (config_dict["base64_encode"]):
+            raise AssertionError(f"Expected True, got {config_dict["base64_encode"]}")
+        if config_dict["attribute_mapping"] != {"email": "mail", "name": "cn"}:
+            raise AssertionError(f"Expected {{"email": "mail", "name": "cn"}}, got {config_dict["attribute_mapping"]}")
 
     def test_error_handling_integration(self) -> None:
         """Test error handling across the system."""
@@ -362,5 +397,8 @@ class TestIntegration:
             assert hasattr(target, "cli")
 
             # Config should be accessible
-            assert target.config["output_path"] == tmp_dir
-            assert target.config["dn_template"] == "uid={uid},ou=users,dc=example,dc=com"
+            if target.config["output_path"] != tmp_dir:
+                raise AssertionError(f"Expected {tmp_dir}, got {target.config["output_path"]}")
+            assert (
+                target.config["dn_template"] == "uid={uid},ou=users,dc=example,dc=com"
+            )

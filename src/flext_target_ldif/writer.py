@@ -55,7 +55,7 @@ class LdifWriter:
             # Create output directory if needed
             self.output_file.parent.mkdir(parents=True, exist_ok=True)
             return FlextResult.ok(None)
-        except Exception as e:
+        except (RuntimeError, ValueError, TypeError) as e:
             return FlextResult.fail(f"Failed to prepare LDIF file: {e}")
 
     def close(self) -> FlextResult[None]:
@@ -76,17 +76,21 @@ class LdifWriter:
                                 entry_dict[mapped_key] = value
 
                         ldif_entries.append(entry_dict)
-                    except Exception as e:
+                    except (RuntimeError, ValueError, TypeError) as e:
                         logger.warning("Skipping invalid record: %s", e)
                         continue
 
                 # Use flext-ldif writer to write entries
-                result = self._writer.write_entries_to_file(self.output_file, ldif_entries)
+                result = self._writer.write_entries_to_file(
+                    self.output_file, ldif_entries,
+                )
                 if not result.success:
-                    return FlextResult.fail(f"Failed to write LDIF file: {result.error}")
+                    return FlextResult.fail(
+                        f"Failed to write LDIF file: {result.error}",
+                    )
 
             return FlextResult.ok(None)
-        except Exception as e:
+        except (RuntimeError, ValueError, TypeError) as e:
             return FlextResult.fail(f"Failed to close LDIF file: {e}")
 
     def write_record(self, record: dict[str, Any]) -> FlextResult[None]:
@@ -96,7 +100,7 @@ class LdifWriter:
             self._records.append(record.copy())
             self._record_count += 1
             return FlextResult.ok(None)
-        except Exception as e:
+        except (RuntimeError, ValueError, TypeError) as e:
             return FlextResult.fail(f"Failed to buffer record: {e}")
 
     def _generate_dn(self, record: dict[str, Any]) -> str:

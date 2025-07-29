@@ -15,24 +15,35 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+# Import flext-core patterns for consistency
+from flext_core import FlextError, FlextResult
+
 # Import consolidated implementations from flext-meltano
 # MIGRATED: Singer SDK imports centralized via flext-meltano
-from flext_meltano.targets.ldif import TargetLDIF, TargetLDIFConfig
+from flext_meltano.targets.ldif import (
+    FlextLDIFTarget,
+    FlextLDIFTargetConfig,
+    TargetLDIF,
+    TargetLDIFConfig,
+)
 
 # Backward compatibility aliases
-FlextTargetLDIF = TargetLDIF
-FlextTargetLDIFConfig = TargetLDIFConfig
+FlextTargetLDIF = FlextLDIFTarget
+FlextTargetLDIFConfig = FlextLDIFTargetConfig
 LDIFTarget = TargetLDIF
-TargetConfig = TargetLDIFConfig
 
-__version__ = "0.8.0-wrapper"
+__version__ = "0.8.0"
 
 __all__ = [
+    # Main implementation (from flext-meltano)
+    "FlextLDIFTarget",
+    "FlextLDIFTargetConfig",
+    # Core patterns
+    "FlextResult",
     # Backward compatibility
     "FlextTargetLDIF",
     "FlextTargetLDIFConfig",
     "LDIFTarget",
-    "TargetConfig",
     "TargetLDIF",
     "TargetLDIFConfig",
     "__version__",
