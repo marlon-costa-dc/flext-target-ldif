@@ -13,7 +13,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, Self
 
 from flext_core import FlextResult, get_logger
-from flext_ldif import FlextLdifWriter
+from flext_ldif import FlextLdifEntry, flext_ldif_write
 
 from flext_target_ldif.exceptions import FlextTargetLdifWriterError
 
@@ -21,9 +21,6 @@ if TYPE_CHECKING:
     import types
 
 logger = get_logger(__name__)
-
-# Use flext-ldif writer instead of reimplementing LDIF writing functionality
-LDIFWriter = FlextLdifWriter
 
 
 class LdifWriter:
@@ -44,8 +41,7 @@ class LdifWriter:
         self.attribute_mapping = attribute_mapping or {}
         self.schema = schema or {}
 
-        # Use flext-ldif writer
-        self._writer = FlextLdifWriter()
+        # Use flext-ldif API for writing
         self._records: list[dict[str, Any]] = []
         self._record_count = 0
 
@@ -62,32 +58,39 @@ class LdifWriter:
         """Close the output file and write all collected records."""
         try:
             if self._records:
-                # Convert records to LDIF entries format expected by flext-ldif
+                # Convert records to FlextLdifEntry objects for flext-ldif API
                 ldif_entries = []
                 for record in self._records:
                     try:
                         dn = self._generate_dn(record)
-                        entry_dict = {"dn": dn}
+                        attributes = {}
 
                         # Apply attribute mapping and add to entry
                         for key, value in record.items():
                             if key != "dn":  # Skip DN as it's already set
                                 mapped_key = self.attribute_mapping.get(key, key)
-                                entry_dict[mapped_key] = value
+                                attributes[mapped_key] = value
 
-                        ldif_entries.append(entry_dict)
+                        # Create FlextLdifEntry using the real API
+                        # Convert dict to list format expected by FlextLdifAttributes
+                        attr_dict = {}
+                        for key, value in attributes.items():
+                            attr_dict[key] = [str(value)] if not isinstance(value, list) else [str(v) for v in value]
+
+                        entry = FlextLdifEntry(
+                            dn=dn,  # type: ignore[arg-type]  # Field validator converts str to FlextLdifDistinguishedName
+                            attributes=attr_dict,  # type: ignore[arg-type]  # Field validator converts dict to FlextLdifAttributes
+                        )
+                        ldif_entries.append(entry)
                     except (RuntimeError, ValueError, TypeError) as e:
                         logger.warning("Skipping invalid record: %s", e)
                         continue
 
-                # Use flext-ldif writer to write entries
-                result = self._writer.write_entries_to_file(
-                    self.output_file, ldif_entries,
-                )
-                if not result.success:
-                    return FlextResult.fail(
-                        f"Failed to write LDIF file: {result.error}",
-                    )
+                # Use real flext-ldif API to write entries
+                ldif_content = flext_ldif_write(ldif_entries, str(self.output_file))
+
+                # Write to file
+                self.output_file.write_text(ldif_content, encoding="utf-8")
 
             return FlextResult.ok(None)
         except (RuntimeError, ValueError, TypeError) as e:
@@ -132,6 +135,5 @@ class LdifWriter:
 
 
 __all__ = [
-    "LDIFWriter",
     "LdifWriter",
 ]

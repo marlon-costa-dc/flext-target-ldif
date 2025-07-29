@@ -37,7 +37,9 @@ class TestFlextTargetLdifConfig:
             raise AssertionError(f"Expected {"uid={uid},ou=users,dc=example,dc=com"}, got {config.dn_template}")
         assert config.line_length == 78
         if config.base64_encode:
-            raise AssertionError(f"Expected False, got {config.base64_encode}")\ n
+            raise AssertionError(f"Expected False, got {config.base64_encode}")
+    
+    
     def test_config_creation_with_custom_values(self) -> None:
         """Test creating config with custom values."""
         config = FlextTargetLdifConfig(

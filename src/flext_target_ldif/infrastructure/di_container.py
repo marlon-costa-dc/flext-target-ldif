@@ -60,7 +60,7 @@ def get_flext_target_ldif_service(service_name: str) -> object:
     container = get_flext_target_ldif_container()
     result = container.get(service_name)
 
-    if result.success:
+    if result.is_success:
         return result.data
 
     # Service not found - silent fail for now

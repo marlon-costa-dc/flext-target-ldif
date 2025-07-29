@@ -6,8 +6,7 @@ from __future__ import annotations
 import typing as t
 from pathlib import Path
 
-from flext_meltano import th
-from flext_meltano.singer import FlextMeltanoTarget as Target
+from flext_meltano import Target, singer_typing as th
 
 from flext_target_ldif.sinks import LDIFSink
 
@@ -56,7 +55,7 @@ class TargetLDIF(Target):
         ),
     ).to_dict()
 
-    default_sink_class: t.ClassVar = LDIFSink
+    default_sink_class = LDIFSink
 
     def __init__(
         self,

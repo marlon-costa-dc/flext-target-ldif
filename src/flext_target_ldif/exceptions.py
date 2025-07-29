@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from flext_core import FlextValueObject
+from flext_core import FlextResult, FlextValueObject
 
 
 class FlextTargetLdifError(Exception):
@@ -66,20 +66,22 @@ class FlextTargetLdifErrorDetails(FlextValueObject):
     timestamp: str
     source_component: str
 
-    def validate_domain_rules(self) -> None:
+    def validate_domain_rules(self) -> FlextResult[None]:
         """Validate domain-specific business rules."""
-        # Validate error code format
-        if not self.error_code or not self.error_code.startswith("LDIF"):
-            msg = "Error code must start with 'LDIF'"
-            raise ValueError(msg)
+        try:
+            # Validate error code format
+            if not self.error_code or not self.error_code.startswith("LDIF"):
+                return FlextResult.fail("Error code must start with 'LDIF'")
 
-        # Validate error type is not empty
-        if not self.error_type:
-            msg = "Error type cannot be empty"
-            raise ValueError(msg)
+            # Validate error type is not empty
+            if not self.error_type:
+                return FlextResult.fail("Error type cannot be empty")
 
-        # Validate source component is valid
-        valid_components = ["writer", "sinks", "target", "infrastructure", "validation"]
-        if self.source_component not in valid_components:
-            msg = f"Invalid source component: {self.source_component}"
-            raise ValueError(msg)
+            # Validate source component is valid
+            valid_components = ["writer", "sinks", "target", "infrastructure", "validation"]
+            if self.source_component not in valid_components:
+                return FlextResult.fail(f"Invalid source component: {self.source_component}")
+
+            return FlextResult.ok(None)
+        except Exception as e:
+            return FlextResult.fail(f"Domain validation failed: {e}")
