@@ -260,9 +260,17 @@ class FlextTargetLdifErrorDetails(FlextValueObject):
                 return FlextResult.fail("Error type cannot be empty")
 
             # Validate source component is valid
-            valid_components = ["writer", "sinks", "target", "infrastructure", "validation"]
+            valid_components = [
+                "writer",
+                "sinks",
+                "target",
+                "infrastructure",
+                "validation",
+            ]
             if self.source_component not in valid_components:
-                return FlextResult.fail(f"Invalid source component: {self.source_component}")
+                return FlextResult.fail(
+                    f"Invalid source component: {self.source_component}",
+                )
 
             return FlextResult.ok(None)
         except Exception as e:

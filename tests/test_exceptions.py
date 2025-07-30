@@ -6,12 +6,10 @@ SPDX-License-Identifier: MIT
 REFACTORED: Complete exception system with 100% coverage and validation.
 """
 
-from pydantic import ValidationError
-
-
 from __future__ import annotations
 
 import pytest
+from pydantic import ValidationError
 
 from flext_target_ldif.exceptions import (
     FlextTargetLdifConfigurationError,
@@ -31,17 +29,22 @@ class TestFlextTargetLdifError:
         """Test creating error with message only."""
         error = FlextTargetLdifError("Test error message")
         if error.message != "Test error message":
-            raise AssertionError(f"Expected {"Test error message"}, got {error.message}")
+            msg = f"Expected {'Test error message'}, got {error.message}"
+            raise AssertionError(
+                msg,
+            )
         assert error.details == {}
         if str(error) != "Test error message":
-            raise AssertionError(f"Expected {"Test error message"}, got {str(error)}")
+            msg = f"Expected {'Test error message'}, got {error!s}"
+            raise AssertionError(msg)
 
     def test_error_creation_with_details(self) -> None:
         """Test creating error with details."""
         details = {"field": "value", "code": "LDIF001"}
         error = FlextTargetLdifError("Test error", details)
         if error.message != "Test error":
-            raise AssertionError(f"Expected {"Test error"}, got {error.message}")
+            msg = f"Expected {'Test error'}, got {error.message}"
+            raise AssertionError(msg)
         assert error.details == details
 
     def test_error_inheritance(self) -> None:
@@ -64,10 +67,14 @@ class TestFlextTargetLdifErrorDetails:
             source_component="target",
         )
         if details.error_code != "LDIF_CONFIG_001":
-            raise AssertionError(f"Expected {"LDIF_CONFIG_001"}, got {details.error_code}")
+            msg = f"Expected {'LDIF_CONFIG_001'}, got {details.error_code}"
+            raise AssertionError(
+                msg,
+            )
         assert details.error_type == "configuration"
         if details.source_component != "target":
-            raise AssertionError(f"Expected {"target"}, got {details.source_component}")
+            msg = f"Expected {'target'}, got {details.source_component}"
+            raise AssertionError(msg)
 
     def test_valid_writer_error_details(self) -> None:
         """Test creating valid writer error details."""
@@ -79,13 +86,14 @@ class TestFlextTargetLdifErrorDetails:
             source_component="writer",
         )
         if details.error_code != "LDIF_WRITE_001":
-            raise AssertionError(f"Expected {"LDIF_WRITE_001"}, got {details.error_code}")
+            msg = f"Expected {'LDIF_WRITE_001'}, got {details.error_code}"
+            raise AssertionError(
+                msg,
+            )
         assert details.source_component == "writer"
 
     def test_error_details_immutability(self) -> None:
         """Test that error details are immutable."""
-
-
         details = FlextTargetLdifErrorDetails(
             error_code="LDIF_001",
             error_type="test",
@@ -154,35 +162,44 @@ class TestSpecificExceptions:
         error = FlextTargetLdifConfigurationError("Invalid config")
         assert isinstance(error, FlextTargetLdifError)
         if error.message != "Invalid config":
-            raise AssertionError(f"Expected {"Invalid config"}, got {error.message}")
+            msg = f"Expected {'Invalid config'}, got {error.message}"
+            raise AssertionError(msg)
 
     def test_validation_error(self) -> None:
         """Test FlextTargetLdifValidationError."""
         error = FlextTargetLdifValidationError("Validation failed")
         assert isinstance(error, FlextTargetLdifError)
         if error.message != "Validation failed":
-            raise AssertionError(f"Expected {"Validation failed"}, got {error.message}")
+            msg = f"Expected {'Validation failed'}, got {error.message}"
+            raise AssertionError(msg)
 
     def test_file_error(self) -> None:
         """Test FlextTargetLdifFileError."""
         error = FlextTargetLdifFileError("File not found")
         assert isinstance(error, FlextTargetLdifError)
         if error.message != "File not found":
-            raise AssertionError(f"Expected {"File not found"}, got {error.message}")
+            msg = f"Expected {'File not found'}, got {error.message}"
+            raise AssertionError(msg)
 
     def test_writer_error(self) -> None:
         """Test FlextTargetLdifWriterError."""
         error = FlextTargetLdifWriterError("Write operation failed")
         assert isinstance(error, FlextTargetLdifError)
         if error.message != "Write operation failed":
-            raise AssertionError(f"Expected {"Write operation failed"}, got {error.message}")
+            msg = f"Expected {'Write operation failed'}, got {error.message}"
+            raise AssertionError(
+                msg,
+            )
 
     def test_schema_error(self) -> None:
         """Test FlextTargetLdifSchemaError."""
         error = FlextTargetLdifSchemaError("Schema validation failed")
         assert isinstance(error, FlextTargetLdifError)
         if error.message != "Schema validation failed":
-            raise AssertionError(f"Expected {"Schema validation failed"}, got {error.message}")
+            msg = f"Expected {'Schema validation failed'}, got {error.message}"
+            raise AssertionError(
+                msg,
+            )
 
 
 class TestExceptionHierarchy:
@@ -218,11 +235,16 @@ class TestExceptionHierarchy:
         )
 
         if error.message != "Failed to write LDIF record":
-
-            raise AssertionError(f"Expected {"Failed to write LDIF record"}, got {error.message}")
+            msg = f"Expected {'Failed to write LDIF record'}, got {error.message}"
+            raise AssertionError(
+                msg,
+            )
         assert error.details["error_code"] == "LDIF_WRITE_001"
         if error.details["source_component"] != "writer":
-            raise AssertionError(f"Expected {"writer"}, got {error.details["source_component"]}")
+            msg = f"Expected {'writer'}, got {error.details['source_component']}"
+            raise AssertionError(
+                msg,
+            )
         assert error.details["error_type"] == "writer"
 
     def test_exception_chaining(self) -> None:

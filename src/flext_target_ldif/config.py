@@ -85,7 +85,9 @@ class FlextTargetLdifConfig(FlextValueObject):
 
             # Validate DN template has required structure
             if not self.dn_template or "=" not in self.dn_template:
-                return FlextResult.fail("DN template must contain at least one attribute=value pair")
+                return FlextResult.fail(
+                    "DN template must contain at least one attribute=value pair",
+                )
 
             return FlextResult.ok(None)
         except Exception as e:

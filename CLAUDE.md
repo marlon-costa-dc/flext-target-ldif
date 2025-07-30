@@ -26,9 +26,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### Dependencies
 
 The project integrates with the FLEXT ecosystem:
+
 - `flext-core`: Base patterns and utilities
 - `flext-meltano`: Singer SDK integration
-- `flext-ldif`: LDIF processing infrastructure  
+- `flext-ldif`: LDIF processing infrastructure
 - `flext-observability`: Monitoring and logging
 
 ## Development Commands
@@ -43,7 +44,7 @@ make validate               # lint + type-check + security + test (90% coverage)
 make check                  # lint + type-check + test
 
 # Individual quality gates
-make lint                   # Ruff linting (ALL rules enabled)  
+make lint                   # Ruff linting (ALL rules enabled)
 make type-check            # MyPy strict mode type checking
 make security              # Bandit + pip-audit + secrets scan
 make test                  # Pytest with 90% coverage requirement
@@ -54,7 +55,7 @@ make test                  # Pytest with 90% coverage requirement
 ```bash
 # Comprehensive testing
 make test                   # All tests with coverage report
-make test-unit             # Unit tests only  
+make test-unit             # Unit tests only
 make test-integration      # Integration tests only
 make test-singer           # Singer protocol tests
 make coverage              # Generate HTML coverage report
@@ -222,39 +223,48 @@ tests/
 ## TODO: GAPS DE ARQUITETURA IDENTIFICADOS - PRIORIDADE ALTA
 
 ### 🚨 GAP 1: LDIF Library Integration Efficiency
+
 **Status**: ALTO - Integration com flext-ldif pode ser optimized
 **Problema**:
+
 - LdifWriter usando flext-ldif infrastructure mas pode duplicate functionality
 - LDIF processing patterns podem divergir entre target e library
 - Performance optimization opportunities podem não be leveraged
 
 **TODO**:
+
 - [ ] Optimize integration com flext-ldif para eliminate duplication
 - [ ] Leverage advanced LDIF processing features from library
 - [ ] Align LDIF validation patterns
 - [ ] Document LDIF integration best practices
 
 ### 🚨 GAP 2: Singer Target Data Loading Patterns
+
 **Status**: ALTO - LDIF target loading patterns podem não be optimal
 **Problema**:
+
 - Batch processing strategies para LDIF não documented
 - Memory management para large LDIF exports pode be issue
 - Error handling para LDIF format errors pode be incomplete
 
 **TODO**:
+
 - [ ] Implement LDIF batch processing optimizations
 - [ ] Add memory-efficient streaming para large exports
 - [ ] Enhance error handling para LDIF-specific failures
 - [ ] Document LDIF target loading patterns
 
 ### 🚨 GAP 3: LDIF Format Validation Completeness
+
 **Status**: ALTO - LDIF format validation pode não be comprehensive
 **Problema**:
+
 - LDIF format compliance validation pode be incomplete
 - Schema validation para LDIF attributes pode be missing
 - Data quality checks específicos para LDIF podem be needed
 
 **TODO**:
+
 - [ ] Implement comprehensive LDIF format validation
 - [ ] Add schema-aware LDIF validation
 - [ ] Include data quality checks específicos para LDIF
