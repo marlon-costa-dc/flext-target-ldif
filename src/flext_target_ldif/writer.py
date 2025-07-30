@@ -75,11 +75,15 @@ class LdifWriter:
                         # Convert dict to list format expected by FlextLdifAttributes
                         attr_dict = {}
                         for key, value in attributes.items():
-                            attr_dict[key] = [str(value)] if not isinstance(value, list) else [str(v) for v in value]
+                            attr_dict[key] = (
+                                [str(value)]
+                                if not isinstance(value, list)
+                                else [str(v) for v in value]
+                            )
 
                         entry = FlextLdifEntry(
-                            dn=dn,  # type: ignore[arg-type]  # Field validator converts str to FlextLdifDistinguishedName
-                            attributes=attr_dict,  # type: ignore[arg-type]  # Field validator converts dict to FlextLdifAttributes
+                            dn=dn,  # Field validator converts str to FlextLdifDistinguishedName
+                            attributes=attr_dict,  # Field validator converts dict to FlextLdifAttributes
                         )
                         ldif_entries.append(entry)
                     except (RuntimeError, ValueError, TypeError) as e:
