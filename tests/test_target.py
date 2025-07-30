@@ -311,7 +311,10 @@ class TestIntegration:
     def test_end_to_end_ldif_generation(self) -> None:
         """Test end-to-end LDIF generation."""
         with tempfile.NamedTemporaryFile(
-            encoding="utf-8", mode="w+", delete=False, suffix=".ldif",
+            encoding="utf-8",
+            mode="w+",
+            delete=False,
+            suffix=".ldif",
         ) as tmp:
             tmp_path = Path(tmp.name)
 

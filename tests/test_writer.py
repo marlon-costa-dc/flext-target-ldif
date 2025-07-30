@@ -107,7 +107,9 @@ class TestLdifWriterFileOperations:
     def test_open_success(self) -> None:
         """Test successful file opening."""
         with tempfile.NamedTemporaryFile(
-            encoding="utf-8", mode="w", delete=False,
+            encoding="utf-8",
+            mode="w",
+            delete=False,
         ) as tmp:
             tmp_path = Path(tmp.name)
 
@@ -138,7 +140,9 @@ class TestLdifWriterFileOperations:
     def test_close_success(self) -> None:
         """Test successful file closing."""
         with tempfile.NamedTemporaryFile(
-            encoding="utf-8", mode="w", delete=False,
+            encoding="utf-8",
+            mode="w",
+            delete=False,
         ) as tmp:
             tmp_path = Path(tmp.name)
 
@@ -182,7 +186,9 @@ class TestLdifWriterRecordWriting:
     def test_write_simple_record(self) -> None:
         """Test writing a simple record."""
         with tempfile.NamedTemporaryFile(
-            encoding="utf-8", mode="w+", delete=False,
+            encoding="utf-8",
+            mode="w+",
+            delete=False,
         ) as tmp:
             tmp_path = Path(tmp.name)
 
@@ -216,7 +222,9 @@ class TestLdifWriterRecordWriting:
     def test_write_record_with_attribute_mapping(self) -> None:
         """Test writing record with attribute mapping."""
         with tempfile.NamedTemporaryFile(
-            encoding="utf-8", mode="w+", delete=False,
+            encoding="utf-8",
+            mode="w+",
+            delete=False,
         ) as tmp:
             tmp_path = Path(tmp.name)
 
@@ -241,7 +249,9 @@ class TestLdifWriterRecordWriting:
     def test_write_record_auto_open(self) -> None:
         """Test that write_record automatically opens file if not open."""
         with tempfile.NamedTemporaryFile(
-            encoding="utf-8", mode="w+", delete=False,
+            encoding="utf-8",
+            mode="w+",
+            delete=False,
         ) as tmp:
             tmp_path = Path(tmp.name)
 
@@ -275,7 +285,9 @@ class TestLdifWriterRecordWriting:
     def test_write_multiple_records(self) -> None:
         """Test writing multiple records."""
         with tempfile.NamedTemporaryFile(
-            encoding="utf-8", mode="w+", delete=False,
+            encoding="utf-8",
+            mode="w+",
+            delete=False,
         ) as tmp:
             tmp_path = Path(tmp.name)
 
@@ -346,7 +358,9 @@ class TestLdifWriterBase64Encoding:
     def test_write_base64_encoded_attribute(self) -> None:
         """Test writing base64 encoded attributes."""
         with tempfile.NamedTemporaryFile(
-            encoding="utf-8", mode="w+", delete=False,
+            encoding="utf-8",
+            mode="w+",
+            delete=False,
         ) as tmp:
             tmp_path = Path(tmp.name)
 
@@ -388,7 +402,9 @@ class TestLdifWriterBase64Encoding:
     def test_force_base64_encoding(self) -> None:
         """Test forcing base64 encoding via options."""
         with tempfile.NamedTemporaryFile(
-            encoding="utf-8", mode="w+", delete=False,
+            encoding="utf-8",
+            mode="w+",
+            delete=False,
         ) as tmp:
             tmp_path = Path(tmp.name)
 
@@ -417,7 +433,9 @@ class TestLdifWriterLineWrapping:
     def test_short_line_no_wrapping(self) -> None:
         """Test short lines are not wrapped."""
         with tempfile.NamedTemporaryFile(
-            encoding="utf-8", mode="w+", delete=False,
+            encoding="utf-8",
+            mode="w+",
+            delete=False,
         ) as tmp:
             tmp_path = Path(tmp.name)
 
@@ -437,7 +455,9 @@ class TestLdifWriterLineWrapping:
     def test_long_line_wrapping(self) -> None:
         """Test long lines are properly wrapped."""
         with tempfile.NamedTemporaryFile(
-            encoding="utf-8", mode="w+", delete=False,
+            encoding="utf-8",
+            mode="w+",
+            delete=False,
         ) as tmp:
             tmp_path = Path(tmp.name)
 
@@ -532,7 +552,9 @@ class TestLdifWriterContextManager:
     def test_context_manager_usage(self) -> None:
         """Test using LdifWriter as context manager."""
         with tempfile.NamedTemporaryFile(
-            encoding="utf-8", mode="w+", delete=False,
+            encoding="utf-8",
+            mode="w+",
+            delete=False,
         ) as tmp:
             tmp_path = Path(tmp.name)
 
@@ -559,7 +581,9 @@ class TestLdifWriterContextManager:
     def test_context_manager_exception_handling(self) -> None:
         """Test context manager properly closes file on exception."""
         with tempfile.NamedTemporaryFile(
-            encoding="utf-8", mode="w+", delete=False,
+            encoding="utf-8",
+            mode="w+",
+            delete=False,
         ) as tmp:
             tmp_path = Path(tmp.name)
 
@@ -584,7 +608,9 @@ class TestLdifWriterHeaderGeneration:
     def test_header_with_timestamps(self) -> None:
         """Test header generation with timestamps."""
         with tempfile.NamedTemporaryFile(
-            encoding="utf-8", mode="w+", delete=False,
+            encoding="utf-8",
+            mode="w+",
+            delete=False,
         ) as tmp:
             tmp_path = Path(tmp.name)
 
@@ -606,7 +632,9 @@ class TestLdifWriterHeaderGeneration:
     def test_header_without_timestamps(self) -> None:
         """Test header generation without timestamps."""
         with tempfile.NamedTemporaryFile(
-            encoding="utf-8", mode="w+", delete=False,
+            encoding="utf-8",
+            mode="w+",
+            delete=False,
         ) as tmp:
             tmp_path = Path(tmp.name)
 
@@ -632,7 +660,9 @@ class TestLdifWriterProperties:
     def test_record_count_property(self) -> None:
         """Test record_count property."""
         with tempfile.NamedTemporaryFile(
-            encoding="utf-8", mode="w+", delete=False,
+            encoding="utf-8",
+            mode="w+",
+            delete=False,
         ) as tmp:
             tmp_path = Path(tmp.name)
 
@@ -657,7 +687,9 @@ class TestLdifWriterProperties:
     def test_record_count_after_close(self) -> None:
         """Test record_count persists after close."""
         with tempfile.NamedTemporaryFile(
-            encoding="utf-8", mode="w+", delete=False,
+            encoding="utf-8",
+            mode="w+",
+            delete=False,
         ) as tmp:
             tmp_path = Path(tmp.name)
 
