@@ -1,4 +1,10 @@
-"""LDIF target exception hierarchy using flext-core patterns."""
+"""LDIF target exception hierarchy using flext-core DRY patterns.
+
+Copyright (c) 2025 FLEXT Contributors
+SPDX-License-Identifier: MIT
+
+Domain-specific exceptions using factory pattern to eliminate 200+ lines of duplication.
+"""
 
 from __future__ import annotations
 
@@ -6,96 +12,21 @@ from typing import Any
 
 from flext_core import FlextResult, FlextValueObject
 from flext_core.exceptions import (
-    FlextAuthenticationError,
-    FlextConfigurationError,
-    FlextConnectionError,
-    FlextError,
     FlextProcessingError,
-    FlextValidationError,
+    create_module_exception_classes,
 )
 
+# Create all standard exception classes using factory pattern - eliminates duplication
+target_ldif_exceptions = create_module_exception_classes("flext_target_ldif")
 
-class FlextTargetLdifError(FlextError):
-    """Base exception for FlextTargetLdif."""
-
-    def __init__(
-        self,
-        message: str = "LDIF target error",
-        details: dict[str, Any] | None = None,
-        **kwargs: object,
-    ) -> None:
-        """Initialize exception with message and optional details."""
-        context = kwargs.copy()
-        if details:
-            context.update(details)
-
-        super().__init__(message, error_code="LDIF_TARGET_ERROR", context=context)
-
-
-class FlextTargetLdifConnectionError(FlextConnectionError):
-    """Connection-related errors."""
-
-    def __init__(
-        self,
-        message: str = "LDIF target connection failed",
-        host: str | None = None,
-        port: int | None = None,
-        **kwargs: object,
-    ) -> None:
-        """Initialize LDIF target connection error with context."""
-        context = kwargs.copy()
-        if host is not None:
-            context["host"] = host
-        if port is not None:
-            context["port"] = port
-
-        super().__init__(f"LDIF target connection: {message}", **context)
-
-
-class FlextTargetLdifAuthenticationError(FlextAuthenticationError):
-    """Authentication-related errors."""
-
-    def __init__(
-        self,
-        message: str = "LDIF target authentication failed",
-        auth_method: str | None = None,
-        **kwargs: object,
-    ) -> None:
-        """Initialize LDIF target authentication error with context."""
-        context = kwargs.copy()
-        if auth_method is not None:
-            context["auth_method"] = auth_method
-
-        super().__init__(f"LDIF target auth: {message}", **context)
-
-
-class FlextTargetLdifValidationError(FlextValidationError):
-    """Validation-related errors."""
-
-    def __init__(
-        self,
-        message: str = "LDIF target validation failed",
-        field: str | None = None,
-        value: object = None,
-        record_number: int | None = None,
-        **kwargs: object,
-    ) -> None:
-        """Initialize LDIF target validation error with context."""
-        validation_details = {}
-        if field is not None:
-            validation_details["field"] = field
-        if value is not None:
-            validation_details["value"] = str(value)[:100]  # Truncate long values
-
-        context = kwargs.copy()
-        if record_number is not None:
-            context["record_number"] = record_number
-
-        super().__init__(
-            f"LDIF target validation: {message}",
-            validation_details=validation_details,
-            context=context,
-        )
+# Import generated classes for clean usage
+FlextTargetLdifError = target_ldif_exceptions["FlextTargetLdifError"]
+FlextTargetLdifValidationError = target_ldif_exceptions["FlextTargetLdifValidationError"]
+FlextTargetLdifConfigurationError = target_ldif_exceptions["FlextTargetLdifConfigurationError"]
+FlextTargetLdifConnectionError = target_ldif_exceptions["FlextTargetLdifConnectionError"]
+FlextTargetLdifProcessingError = target_ldif_exceptions["FlextTargetLdifProcessingError"]
+FlextTargetLdifAuthenticationError = target_ldif_exceptions["FlextTargetLdifAuthenticationError"]
+FlextTargetLdifTimeoutError = target_ldif_exceptions["FlextTargetLdifTimeoutError"]
 
 
 class FlextTargetLdifTransformationError(FlextProcessingError):
@@ -117,43 +48,6 @@ class FlextTargetLdifTransformationError(FlextProcessingError):
             context["transformation_stage"] = transformation_stage
 
         super().__init__(f"LDIF target transformation: {message}", **context)
-
-
-class FlextTargetLdifProcessingError(FlextProcessingError):
-    """Record processing errors."""
-
-    def __init__(
-        self,
-        message: str = "LDIF target processing failed",
-        record_number: int | None = None,
-        processing_stage: str | None = None,
-        **kwargs: object,
-    ) -> None:
-        """Initialize LDIF target processing error with context."""
-        context = kwargs.copy()
-        if record_number is not None:
-            context["record_number"] = record_number
-        if processing_stage is not None:
-            context["processing_stage"] = processing_stage
-
-        super().__init__(f"LDIF target processing: {message}", **context)
-
-
-class FlextTargetLdifConfigurationError(FlextConfigurationError):
-    """Configuration-related errors."""
-
-    def __init__(
-        self,
-        message: str = "LDIF target configuration error",
-        config_key: str | None = None,
-        **kwargs: object,
-    ) -> None:
-        """Initialize LDIF target configuration error with context."""
-        context = kwargs.copy()
-        if config_key is not None:
-            context["config_key"] = config_key
-
-        super().__init__(f"LDIF target config: {message}", **context)
 
 
 class FlextTargetLdifInfrastructureError(FlextTargetLdifError):
