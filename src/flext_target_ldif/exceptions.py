@@ -21,11 +21,21 @@ target_ldif_exceptions = create_module_exception_classes("flext_target_ldif")
 
 # Import generated classes for clean usage
 FlextTargetLdifError = target_ldif_exceptions["FlextTargetLdifError"]
-FlextTargetLdifValidationError = target_ldif_exceptions["FlextTargetLdifValidationError"]
-FlextTargetLdifConfigurationError = target_ldif_exceptions["FlextTargetLdifConfigurationError"]
-FlextTargetLdifConnectionError = target_ldif_exceptions["FlextTargetLdifConnectionError"]
-FlextTargetLdifProcessingError = target_ldif_exceptions["FlextTargetLdifProcessingError"]
-FlextTargetLdifAuthenticationError = target_ldif_exceptions["FlextTargetLdifAuthenticationError"]
+FlextTargetLdifValidationError = target_ldif_exceptions[
+    "FlextTargetLdifValidationError"
+]
+FlextTargetLdifConfigurationError = target_ldif_exceptions[
+    "FlextTargetLdifConfigurationError"
+]
+FlextTargetLdifConnectionError = target_ldif_exceptions[
+    "FlextTargetLdifConnectionError"
+]
+FlextTargetLdifProcessingError = target_ldif_exceptions[
+    "FlextTargetLdifProcessingError"
+]
+FlextTargetLdifAuthenticationError = target_ldif_exceptions[
+    "FlextTargetLdifAuthenticationError"
+]
 FlextTargetLdifTimeoutError = target_ldif_exceptions["FlextTargetLdifTimeoutError"]
 
 
