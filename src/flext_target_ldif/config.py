@@ -32,11 +32,13 @@ class FlextTargetLdifConfig(FlextValueObject):
         description="Mapping of stream fields to LDAP attributes",
     )
     ldif_options: dict[str, object] = Field(
-        default_factory=lambda: {
-            "line_length": 78,
-            "base64_encode": False,
-            "include_timestamps": True,
-        },
+        default_factory=lambda: dict[str, object](
+            {
+                "line_length": 78,
+                "base64_encode": False,
+                "include_timestamps": True,
+            }
+        ),
         description="LDIF format options",
     )
 

@@ -10,31 +10,27 @@ from __future__ import annotations
 
 from flext_core import FlextResult, FlextValueObject
 from flext_core.exceptions import (
+    FlextError,
     FlextProcessingError,
-    create_module_exception_classes,
+    FlextValidationError,
 )
 
-# Create all standard exception classes using factory pattern - eliminates duplication
-target_ldif_exceptions = create_module_exception_classes("flext_target_ldif")
 
-# Import generated classes for clean usage
-FlextTargetLdifError = target_ldif_exceptions["FlextTargetLdifError"]
-FlextTargetLdifValidationError = target_ldif_exceptions[
-    "FlextTargetLdifValidationError"
-]
-FlextTargetLdifConfigurationError = target_ldif_exceptions[
-    "FlextTargetLdifConfigurationError"
-]
-FlextTargetLdifConnectionError = target_ldif_exceptions[
-    "FlextTargetLdifConnectionError"
-]
-FlextTargetLdifProcessingError = target_ldif_exceptions[
-    "FlextTargetLdifProcessingError"
-]
-FlextTargetLdifAuthenticationError = target_ldif_exceptions[
-    "FlextTargetLdifAuthenticationError"
-]
-FlextTargetLdifTimeoutError = target_ldif_exceptions["FlextTargetLdifTimeoutError"]
+# Base exception class for flext-target-ldif
+class FlextTargetLdifError(FlextError):
+    """Base exception for FLEXT Target LDIF errors."""
+
+    def __init__(
+        self,
+        message: str = "Target LDIF operation failed",
+        **kwargs: object,
+    ) -> None:
+        """Initialize Target LDIF error with context."""
+        super().__init__(
+            f"Target LDIF: {message}",
+            error_code="TARGET_LDIF_ERROR",
+            context=kwargs,
+        )
 
 
 class FlextTargetLdifTransformationError(FlextProcessingError):

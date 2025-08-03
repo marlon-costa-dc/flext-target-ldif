@@ -13,7 +13,12 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Self
 
 from flext_core import FlextResult, get_logger
-from flext_ldif import FlextLdifEntry, flext_ldif_write
+from flext_ldif import (
+    FlextLdifAttributes,
+    FlextLdifDistinguishedName,
+    FlextLdifEntry,
+    flext_ldif_write,
+)
 
 from flext_target_ldif.exceptions import FlextTargetLdifWriterError
 
@@ -82,8 +87,8 @@ class LdifWriter:
                             )
 
                         entry = FlextLdifEntry(
-                            dn=dn,  # Field validator converts str to FlextLdifDistinguishedName
-                            attributes=attr_dict,  # Field validator converts dict to FlextLdifAttributes
+                            dn=FlextLdifDistinguishedName(value=dn),
+                            attributes=FlextLdifAttributes(attributes=attr_dict),
                         )
                         ldif_entries.append(entry)
                     except (RuntimeError, ValueError, TypeError) as e:
