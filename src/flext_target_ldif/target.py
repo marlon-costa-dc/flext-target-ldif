@@ -58,7 +58,7 @@ class TargetLDIF(Target):
                 description="Mapping of stream fields to LDAP attributes",
                 default={},
             ),
-        )
+        ),
     ).to_dict()
 
     default_sink_class = LDIFSink

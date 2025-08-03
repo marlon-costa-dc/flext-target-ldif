@@ -8,8 +8,6 @@ Domain-specific exceptions using factory pattern to eliminate 200+ lines of dupl
 
 from __future__ import annotations
 
-from typing import Any
-
 from flext_core import FlextResult, FlextValueObject
 from flext_core.exceptions import (
     FlextProcessingError,
@@ -45,7 +43,7 @@ class FlextTargetLdifTransformationError(FlextProcessingError):
     def __init__(
         self,
         message: str = "LDIF target transformation failed",
-        record_data: dict[str, Any] | None = None,
+        record_data: dict[str, object] | None = None,
         transformation_stage: str | None = None,
         **kwargs: object,
     ) -> None:
@@ -148,7 +146,7 @@ class FlextTargetLdifErrorDetails(FlextValueObject):
 
     error_code: str
     error_type: str
-    context: dict[str, Any]
+    context: dict[str, object]
     timestamp: str
     source_component: str
 

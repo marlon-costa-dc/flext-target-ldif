@@ -7,7 +7,6 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
 
 from flext_core import FlextResult, FlextValueObject
 from pydantic import Field, field_validator
@@ -32,7 +31,7 @@ class FlextTargetLdifConfig(FlextValueObject):
         default_factory=dict,
         description="Mapping of stream fields to LDAP attributes",
     )
-    ldif_options: dict[str, Any] = Field(
+    ldif_options: dict[str, object] = Field(
         default_factory=lambda: {
             "line_length": 78,
             "base64_encode": False,

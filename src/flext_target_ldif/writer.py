@@ -10,7 +10,7 @@ implementation from flext-ldif project.
 from __future__ import annotations
 
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Self
+from typing import TYPE_CHECKING, Self
 
 from flext_core import FlextResult, get_logger
 from flext_ldif import FlextLdifEntry, flext_ldif_write
@@ -29,10 +29,10 @@ class LdifWriter:
     def __init__(
         self,
         output_file: Path | str | None = None,
-        ldif_options: dict[str, Any] | None = None,
+        ldif_options: dict[str, object] | None = None,
         dn_template: str | None = None,
         attribute_mapping: dict[str, str] | None = None,
-        schema: dict[str, Any] | None = None,
+        schema: dict[str, object] | None = None,
     ) -> None:
         """Initialize the LDIF writer using flext-ldif infrastructure."""
         self.output_file = Path(output_file) if output_file else Path("output.ldif")
@@ -42,7 +42,7 @@ class LdifWriter:
         self.schema = schema or {}
 
         # Use flext-ldif API for writing
-        self._records: list[dict[str, Any]] = []
+        self._records: list[dict[str, object]] = []
         self._record_count = 0
 
     def open(self) -> FlextResult[None]:
@@ -100,7 +100,7 @@ class LdifWriter:
         except (RuntimeError, ValueError, TypeError) as e:
             return FlextResult.fail(f"Failed to close LDIF file: {e}")
 
-    def write_record(self, record: dict[str, Any]) -> FlextResult[None]:
+    def write_record(self, record: dict[str, object]) -> FlextResult[None]:
         """Write a record to the LDIF file buffer."""
         try:
             # Buffer the record for batch writing
@@ -110,7 +110,7 @@ class LdifWriter:
         except (RuntimeError, ValueError, TypeError) as e:
             return FlextResult.fail(f"Failed to buffer record: {e}")
 
-    def _generate_dn(self, record: dict[str, Any]) -> str:
+    def _generate_dn(self, record: dict[str, object]) -> str:
         """Generate DN from record using template."""
         try:
             return self.dn_template.format(**record)
