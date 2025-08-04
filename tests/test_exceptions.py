@@ -29,13 +29,13 @@ class TestFlextTargetLdifError:
         """Test creating error with message only."""
         error = FlextTargetLdifError("Test error message")
         if error.message != "Test error message":
-            msg = f"Expected {'Test error message'}, got {error.message}"
+            msg: str = f"Expected {'Test error message'}, got {error.message}"
             raise AssertionError(
                 msg,
             )
         assert error.details == {}
         if str(error) != "Test error message":
-            msg = f"Expected {'Test error message'}, got {error!s}"
+            msg: str = f"Expected {'Test error message'}, got {error!s}"
             raise AssertionError(msg)
 
     def test_error_creation_with_details(self) -> None:
@@ -43,7 +43,7 @@ class TestFlextTargetLdifError:
         details = {"field": "value", "code": "LDIF001"}
         error = FlextTargetLdifError("Test error", details)
         if error.message != "Test error":
-            msg = f"Expected {'Test error'}, got {error.message}"
+            msg: str = f"Expected {'Test error'}, got {error.message}"
             raise AssertionError(msg)
         assert error.details == details
 
@@ -67,13 +67,13 @@ class TestFlextTargetLdifErrorDetails:
             source_component="target",
         )
         if details.error_code != "LDIF_CONFIG_001":
-            msg = f"Expected {'LDIF_CONFIG_001'}, got {details.error_code}"
+            msg: str = f"Expected {'LDIF_CONFIG_001'}, got {details.error_code}"
             raise AssertionError(
                 msg,
             )
         assert details.error_type == "configuration"
         if details.source_component != "target":
-            msg = f"Expected {'target'}, got {details.source_component}"
+            msg: str = f"Expected {'target'}, got {details.source_component}"
             raise AssertionError(msg)
 
     def test_valid_writer_error_details(self) -> None:
@@ -86,7 +86,7 @@ class TestFlextTargetLdifErrorDetails:
             source_component="writer",
         )
         if details.error_code != "LDIF_WRITE_001":
-            msg = f"Expected {'LDIF_WRITE_001'}, got {details.error_code}"
+            msg: str = f"Expected {'LDIF_WRITE_001'}, got {details.error_code}"
             raise AssertionError(
                 msg,
             )
@@ -162,7 +162,7 @@ class TestSpecificExceptions:
         error = FlextTargetLdifConfigurationError("Invalid config")
         assert isinstance(error, FlextTargetLdifError)
         if error.message != "Invalid config":
-            msg = f"Expected {'Invalid config'}, got {error.message}"
+            msg: str = f"Expected {'Invalid config'}, got {error.message}"
             raise AssertionError(msg)
 
     def test_validation_error(self) -> None:
@@ -170,7 +170,7 @@ class TestSpecificExceptions:
         error = FlextTargetLdifValidationError("Validation failed")
         assert isinstance(error, FlextTargetLdifError)
         if error.message != "Validation failed":
-            msg = f"Expected {'Validation failed'}, got {error.message}"
+            msg: str = f"Expected {'Validation failed'}, got {error.message}"
             raise AssertionError(msg)
 
     def test_file_error(self) -> None:
@@ -178,7 +178,7 @@ class TestSpecificExceptions:
         error = FlextTargetLdifFileError("File not found")
         assert isinstance(error, FlextTargetLdifError)
         if error.message != "File not found":
-            msg = f"Expected {'File not found'}, got {error.message}"
+            msg: str = f"Expected {'File not found'}, got {error.message}"
             raise AssertionError(msg)
 
     def test_writer_error(self) -> None:
@@ -186,7 +186,7 @@ class TestSpecificExceptions:
         error = FlextTargetLdifWriterError("Write operation failed")
         assert isinstance(error, FlextTargetLdifError)
         if error.message != "Write operation failed":
-            msg = f"Expected {'Write operation failed'}, got {error.message}"
+            msg: str = f"Expected {'Write operation failed'}, got {error.message}"
             raise AssertionError(
                 msg,
             )
@@ -196,7 +196,7 @@ class TestSpecificExceptions:
         error = FlextTargetLdifSchemaError("Schema validation failed")
         assert isinstance(error, FlextTargetLdifError)
         if error.message != "Schema validation failed":
-            msg = f"Expected {'Schema validation failed'}, got {error.message}"
+            msg: str = f"Expected {'Schema validation failed'}, got {error.message}"
             raise AssertionError(
                 msg,
             )
@@ -235,13 +235,13 @@ class TestExceptionHierarchy:
         )
 
         if error.message != "Failed to write LDIF record":
-            msg = f"Expected {'Failed to write LDIF record'}, got {error.message}"
+            msg: str = f"Expected {'Failed to write LDIF record'}, got {error.message}"
             raise AssertionError(
                 msg,
             )
         assert error.details["error_code"] == "LDIF_WRITE_001"
         if error.details["source_component"] != "writer":
-            msg = f"Expected {'writer'}, got {error.details['source_component']}"
+            msg: str = f"Expected {'writer'}, got {error.details['source_component']}"
             raise AssertionError(
                 msg,
             )

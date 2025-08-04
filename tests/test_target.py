@@ -28,19 +28,19 @@ class TestFlextTargetLdifConfig:
         """Test creating config with default values."""
         config = FlextTargetLdifConfig(output_file="test.ldif")
         if config.output_file != "test.ldif":
-            msg = f"Expected {'test.ldif'}, got {config.output_file}"
+            msg: str = f"Expected {'test.ldif'}, got {config.output_file}"
             raise AssertionError(msg)
         if not (config.schema_validation):
-            msg = f"Expected True, got {config.schema_validation}"
+            msg: str = f"Expected True, got {config.schema_validation}"
             raise AssertionError(msg)
         if config.dn_template != "uid={uid},ou=users,dc=example,dc=com":
-            msg = f"Expected {'uid={uid},ou=users,dc=example,dc=com'}, got {config.dn_template}"
+            msg: str = f"Expected {'uid={uid},ou=users,dc=example,dc=com'}, got {config.dn_template}"
             raise AssertionError(
                 msg,
             )
         assert config.line_length == 78
         if config.base64_encode:
-            msg = f"Expected False, got {config.base64_encode}"
+            msg: str = f"Expected False, got {config.base64_encode}"
             raise AssertionError(msg)
 
     def test_config_creation_with_custom_values(self) -> None:
@@ -54,22 +54,22 @@ class TestFlextTargetLdifConfig:
             attribute_mapping={"email": "mail"},
         )
         if config.output_file != "/tmp/custom.ldif":
-            msg = f"Expected {'/tmp/custom.ldif'}, got {config.output_file}"
+            msg: str = f"Expected {'/tmp/custom.ldif'}, got {config.output_file}"
             raise AssertionError(
                 msg,
             )
         if config.schema_validation:
-            msg = f"Expected False, got {config.schema_validation}"
+            msg: str = f"Expected False, got {config.schema_validation}"
             raise AssertionError(msg)
         assert config.dn_template == "cn={name},ou=people,dc=test,dc=com"
         if config.line_length != 100:
-            msg = f"Expected {100}, got {config.line_length}"
+            msg: str = f"Expected {100}, got {config.line_length}"
             raise AssertionError(msg)
         if not (config.base64_encode):
-            msg = f"Expected True, got {config.base64_encode}"
+            msg: str = f"Expected True, got {config.base64_encode}"
             raise AssertionError(msg)
         if config.attribute_mapping != {"email": "mail"}:
-            msg = f"Expected {{'email': 'mail'}}, got {config.attribute_mapping}"
+            msg: str = f"Expected {{'email': 'mail'}}, got {config.attribute_mapping}"
             raise AssertionError(
                 msg,
             )
@@ -165,7 +165,7 @@ class TestFlextTargetLdif:
             target.validate_config()
 
         if "Output file is required" not in str(exc_info.value):
-            msg = f"Expected {'Output file is required'} in {exc_info.value!s}"
+            msg: str = f"Expected {'Output file is required'} in {exc_info.value!s}"
             raise AssertionError(
                 msg,
             )
@@ -182,7 +182,7 @@ class TestFlextTargetLdif:
             target.validate_config()
 
         if "Output file cannot be empty" not in str(exc_info.value):
-            msg = f"Expected {'Output file cannot be empty'} in {exc_info.value!s}"
+            msg: str = f"Expected {'Output file cannot be empty'} in {exc_info.value!s}"
             raise AssertionError(
                 msg,
             )
@@ -200,7 +200,7 @@ class TestFlextTargetLdif:
             target.validate_config()
 
         if "DN template cannot be empty" not in str(exc_info.value):
-            msg = f"Expected {'DN template cannot be empty'} in {exc_info.value!s}"
+            msg: str = f"Expected {'DN template cannot be empty'} in {exc_info.value!s}"
             raise AssertionError(
                 msg,
             )
@@ -222,7 +222,7 @@ class TestTargetLDIF:
             config = {"output_path": tmp_dir}
             target = TargetLDIF(config=config)
             if target.name != "target-ldif":
-                msg = f"Expected {'target-ldif'}, got {target.name}"
+                msg: str = f"Expected {'target-ldif'}, got {target.name}"
                 raise AssertionError(msg)
 
     def test_target_ldif_config_schema(self) -> None:
@@ -236,18 +236,18 @@ class TestTargetLDIF:
         # Should have required properties
         properties = target.config_jsonschema.get("properties", {})
         if "output_path" not in properties:
-            msg = f"Expected {'output_path'} in {properties}"
+            msg: str = f"Expected {'output_path'} in {properties}"
             raise AssertionError(msg)
         assert "file_naming_pattern" in properties
         if "dn_template" not in properties:
-            msg = f"Expected {'dn_template'} in {properties}"
+            msg: str = f"Expected {'dn_template'} in {properties}"
             raise AssertionError(msg)
 
     def test_target_ldif_default_sink_class(self) -> None:
         """Test target has proper default sink class."""
         target = TargetLDIF()
         if target.default_sink_class != LDIFSink:
-            msg = f"Expected {LDIFSink}, got {target.default_sink_class}"
+            msg: str = f"Expected {LDIFSink}, got {target.default_sink_class}"
             raise AssertionError(
                 msg,
             )
@@ -284,7 +284,7 @@ class TestTargetLDIF:
             target = TargetLDIF(config=config)
 
             if target.config["output_path"] != tmp_dir:
-                msg = f"Expected {tmp_dir}, got {target.config['output_path']}"
+                msg: str = f"Expected {tmp_dir}, got {target.config['output_path']}"
                 raise AssertionError(
                     msg,
                 )
@@ -377,26 +377,26 @@ class TestIntegration:
         config_dict = config.model_dump()
 
         if config_dict["output_file"] != "test.ldif":
-            msg = f"Expected {'test.ldif'}, got {config_dict['output_file']}"
+            msg: str = f"Expected {'test.ldif'}, got {config_dict['output_file']}"
             raise AssertionError(
                 msg,
             )
         if not (config_dict["schema_validation"]):
-            msg = f"Expected True, got {config_dict['schema_validation']}"
+            msg: str = f"Expected True, got {config_dict['schema_validation']}"
             raise AssertionError(
                 msg,
             )
         if config_dict["dn_template"] != "uid={uid},ou=users,dc=example,dc=com":
-            msg = f"Expected {'uid={uid},ou=users,dc=example,dc=com'}, got {config_dict['dn_template']}"
+            msg: str = f"Expected {'uid={uid},ou=users,dc=example,dc=com'}, got {config_dict['dn_template']}"
             raise AssertionError(
                 msg,
             )
         assert config_dict["line_length"] == 100
         if not (config_dict["base64_encode"]):
-            msg = f"Expected True, got {config_dict['base64_encode']}"
+            msg: str = f"Expected True, got {config_dict['base64_encode']}"
             raise AssertionError(msg)
         if config_dict["attribute_mapping"] != {"email": "mail", "name": "cn"}:
-            msg = f"Expected {{'email': 'mail', 'name': 'cn'}}, got {config_dict['attribute_mapping']}"
+            msg: str = f"Expected {{'email': 'mail', 'name': 'cn'}}, got {config_dict['attribute_mapping']}"
             raise AssertionError(
                 msg,
             )
@@ -438,7 +438,7 @@ class TestIntegration:
 
             # Config should be accessible
             if target.config["output_path"] != tmp_dir:
-                msg = f"Expected {tmp_dir}, got {target.config['output_path']}"
+                msg: str = f"Expected {tmp_dir}, got {target.config['output_path']}"
                 raise AssertionError(
                     msg,
                 )

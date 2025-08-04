@@ -29,7 +29,7 @@ TargetLDIFConfig = FlextTargetLdifConfig
 
 __version__ = "0.9.0"
 
-__all__ = [
+__all__: list[str] = [
     "FlextError",
     # Backward compatibility
     "FlextLDIFTarget",

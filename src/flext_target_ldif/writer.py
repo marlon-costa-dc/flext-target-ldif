@@ -120,7 +120,7 @@ class LdifWriter:
         try:
             return self.dn_template.format(**record)
         except KeyError as e:
-            msg = f"Missing required field for DN generation: {e}"
+            msg: str = f"Missing required field for DN generation: {e}"
             raise FlextTargetLdifWriterError(msg) from e
 
     @property
@@ -143,6 +143,6 @@ class LdifWriter:
         self.close()
 
 
-__all__ = [
+__all__: list[str] = [
     "LdifWriter",
 ]

@@ -71,15 +71,15 @@ class LDIFSink(BatchSink):
         """Process a single record and write to LDIF."""
         ldif_writer = self._get_ldif_writer()
         result = ldif_writer.write_record(record)
-        if not result.is_success:
-            msg = f"Failed to write LDIF record: {result.error}"
+        if not result.success:
+            msg: str = f"Failed to write LDIF record: {result.error}"
             raise RuntimeError(msg)
 
     def clean_up(self) -> None:
         """Clean up resources when sink is finished."""
         if self._ldif_writer:
             result = self._ldif_writer.close()
-            if not result.is_success and hasattr(self, "logger"):
+            if not result.success and hasattr(self, "logger"):
                 self.logger.error(f"Failed to close LDIF writer: {result.error}")
             elif hasattr(self, "logger"):
                 self.logger.info(f"LDIF file written: {self._output_file}")
