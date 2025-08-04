@@ -45,34 +45,33 @@ class TestFlextTargetLdifConfig:
 
     def test_config_creation_with_custom_values(self) -> None:
         """Test creating config with custom values."""
-        config = FlextTargetLdifConfig(
-            output_file="/tmp/custom.ldif",
-            schema_validation=False,
-            dn_template="cn={name},ou=people,dc=test,dc=com",
-            line_length=100,
-            base64_encode=True,
-            attribute_mapping={"email": "mail"},
-        )
-        if config.output_file != "/tmp/custom.ldif":
-            msg: str = f"Expected {'/tmp/custom.ldif'}, got {config.output_file}"
-            raise AssertionError(
-                msg,
+        import tempfile
+        with tempfile.TemporaryDirectory() as temp_dir:
+            custom_file = f"{temp_dir}/custom.ldif"
+            config = FlextTargetLdifConfig(
+                output_file=custom_file,
+                schema_validation=False,
+                dn_template="cn={name},ou=people,dc=test,dc=com",
+                line_length=100,
+                base64_encode=True,
+                attribute_mapping={"email": "mail"},
             )
-        if config.schema_validation:
-            msg: str = f"Expected False, got {config.schema_validation}"
-            raise AssertionError(msg)
-        assert config.dn_template == "cn={name},ou=people,dc=test,dc=com"
-        if config.line_length != 100:
-            msg: str = f"Expected {100}, got {config.line_length}"
-            raise AssertionError(msg)
-        if not (config.base64_encode):
-            msg: str = f"Expected True, got {config.base64_encode}"
-            raise AssertionError(msg)
-        if config.attribute_mapping != {"email": "mail"}:
-            msg: str = f"Expected {{'email': 'mail'}}, got {config.attribute_mapping}"
-            raise AssertionError(
-                msg,
-            )
+            if config.output_file != custom_file:
+                msg: str = f"Expected {custom_file}, got {config.output_file}"
+                raise AssertionError(msg)
+            if config.schema_validation:
+                msg: str = f"Expected False, got {config.schema_validation}"
+                raise AssertionError(msg)
+            assert config.dn_template == "cn={name},ou=people,dc=test,dc=com"
+            if config.line_length != 100:
+                msg: str = f"Expected {100}, got {config.line_length}"
+                raise AssertionError(msg)
+            if not config.base64_encode:
+                msg: str = f"Expected True, got {config.base64_encode}"
+                raise AssertionError(msg)
+            if config.attribute_mapping != {"email": "mail"}:
+                msg: str = f"Expected {{'email': 'mail'}}, got {config.attribute_mapping}"
+                raise AssertionError(msg)
 
     def test_config_immutability(self) -> None:
         """Test that config is immutable."""
@@ -408,7 +407,7 @@ class TestIntegration:
             output_file="",  # Invalid empty file
         )
 
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="Output file cannot be empty"):
             invalid_config.validate_domain_rules()
 
         # Test target validation error

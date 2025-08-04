@@ -6,10 +6,6 @@ SPDX-License-Identifier: MIT
 REFACTORED: Complete writer system with 100% coverage and validation.
 """
 
-# Constants
-EXPECTED_BULK_SIZE = 2
-EXPECTED_DATA_COUNT = 3
-
 from __future__ import annotations
 
 import base64
@@ -21,6 +17,10 @@ import pytest
 
 from flext_target_ldif.exceptions import FlextTargetLdifWriterError
 from flext_target_ldif.writer import LdifWriter
+
+# Constants
+EXPECTED_BULK_SIZE = 2
+EXPECTED_DATA_COUNT = 3
 
 
 class TestLdifWriterInitialization:
@@ -54,51 +54,52 @@ class TestLdifWriterInitialization:
 
     def test_init_with_custom_values(self) -> None:
         """Test initialization with custom values."""
-        output_file = Path("/tmp/custom.ldif")
-        ldif_options = {
-            "line_length": 100,
-            "base64_encode": True,
-            "include_timestamps": False,
-        }
-        dn_template = "cn={name},ou=people,dc=test,dc=com"
-        attribute_mapping = {"email": "mail", "name": "cn"}
-        schema = {"objectClass": ["person", "organizationalPerson"]}
+        with tempfile.TemporaryDirectory() as temp_dir:
+            output_file = Path(temp_dir) / "custom.ldif"
+            ldif_options = {
+                "line_length": 100,
+                "base64_encode": True,
+                "include_timestamps": False,
+            }
+            dn_template = "cn={name},ou=people,dc=test,dc=com"
+            attribute_mapping = {"email": "mail", "name": "cn"}
+            schema = {"objectClass": ["person", "organizationalPerson"]}
 
-        writer = LdifWriter(
-            output_file=output_file,
-            ldif_options=ldif_options,
-            dn_template=dn_template,
-            attribute_mapping=attribute_mapping,
-            schema=schema,
-        )
+            writer = LdifWriter(
+                output_file=output_file,
+                ldif_options=ldif_options,
+                dn_template=dn_template,
+                attribute_mapping=attribute_mapping,
+                schema=schema,
+            )
 
-        if writer.output_file != output_file:
-            msg: str = f"Expected {output_file}, got {writer.output_file}"
-            raise AssertionError(msg)
-        assert writer.ldif_options == ldif_options
-        if writer.dn_template != dn_template:
-            msg: str = f"Expected {dn_template}, got {writer.dn_template}"
-            raise AssertionError(msg)
-        assert writer.attribute_mapping == attribute_mapping
-        if writer.schema != schema:
-            msg: str = f"Expected {schema}, got {writer.schema}"
-            raise AssertionError(msg)
-        assert writer.line_length == 100
-        if not (writer.base64_encode):
-            msg: str = f"Expected True, got {writer.base64_encode}"
-            raise AssertionError(msg)
-        if writer.include_timestamps:
-            msg: str = f"Expected False, got {writer.include_timestamps}"
-            raise AssertionError(msg)
+            if writer.output_file != output_file:
+                msg: str = f"Expected {output_file}, got {writer.output_file}"
+                raise AssertionError(msg)
+            assert writer.ldif_options == ldif_options
+            if writer.dn_template != dn_template:
+                msg: str = f"Expected {dn_template}, got {writer.dn_template}"
+                raise AssertionError(msg)
+            assert writer.attribute_mapping == attribute_mapping
+            if writer.schema != schema:
+                msg: str = f"Expected {schema}, got {writer.schema}"
+                raise AssertionError(msg)
+            assert writer.line_length == 100
+            if not writer.base64_encode:
+                msg: str = f"Expected True, got {writer.base64_encode}"
+                raise AssertionError(msg)
+            if writer.include_timestamps:
+                msg: str = f"Expected False, got {writer.include_timestamps}"
+                raise AssertionError(msg)
 
     def test_init_with_string_path(self) -> None:
         """Test initialization with string path."""
-        writer = LdifWriter(output_file="/tmp/test.ldif")
-        if writer.output_file != Path("/tmp/test.ldif"):
-            msg: str = f"Expected {Path('/tmp/test.ldif')}, got {writer.output_file}"
-            raise AssertionError(
-                msg,
-            )
+        with tempfile.TemporaryDirectory() as temp_dir:
+            test_file = f"{temp_dir}/test.ldif"
+            writer = LdifWriter(output_file=test_file)
+            if writer.output_file != Path(test_file):
+                msg: str = f"Expected {Path(test_file)}, got {writer.output_file}"
+                raise AssertionError(msg)
 
 
 class TestLdifWriterFileOperations:

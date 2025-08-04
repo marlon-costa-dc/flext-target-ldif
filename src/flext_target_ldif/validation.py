@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import re
-import typing as t
 
 
 class ValidationError(Exception):
@@ -32,7 +31,7 @@ def validate_attribute_name(name: str) -> bool:
     return bool(re.match(pattern, name))
 
 
-def validate_attribute_value(value: t.Any) -> bool:
+def validate_attribute_value(value: object) -> bool:
     """Validate LDAP attribute value."""
     if value is None:
         return True
@@ -60,7 +59,7 @@ def sanitize_attribute_name(name: str) -> str:
     return sanitized
 
 
-def validate_record(record: dict[str, t.Any]) -> dict[str, list[str]]:
+def validate_record(record: dict[str, object]) -> dict[str, list[str]]:
     """Validate a record and return validation errors."""
     errors: dict[str, list[str]] = {}
 
@@ -96,7 +95,7 @@ def validate_record(record: dict[str, t.Any]) -> dict[str, list[str]]:
     return errors
 
 
-def validate_schema(schema: dict[str, t.Any]) -> dict[str, list[str]]:
+def validate_schema(schema: dict[str, object]) -> dict[str, list[str]]:
     """Validate Singer schema for LDIF compatibility."""
     errors: dict[str, list[str]] = {}
 

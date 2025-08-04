@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import typing as t
 from pathlib import Path
 
 # MIGRATED: BatchSink now consolidated in flext-meltano
@@ -16,9 +15,9 @@ class LDIFSink(BatchSink):
 
     def __init__(
         self,
-        target: t.Any,
+        target: object,
         stream_name: str,
-        schema: dict[str, t.Any],
+        schema: dict[str, object],
         key_properties: list[str] | None = None,
     ) -> None:
         """Initialize the LDIF sink."""
@@ -58,15 +57,15 @@ class LDIFSink(BatchSink):
 
         return self._ldif_writer
 
-    def process_batch(self, context: dict[str, t.Any]) -> None:
+    def process_batch(self, context: dict[str, object]) -> None:
         """Process a batch of records."""
         # BatchSink handles the batching, we just need to ensure writer is ready
         self._get_ldif_writer()
 
     def process_record(
         self,
-        record: dict[str, t.Any],
-        context: dict[str, t.Any],
+        record: dict[str, object],
+        context: dict[str, object],
     ) -> None:
         """Process a single record and write to LDIF."""
         ldif_writer = self._get_ldif_writer()
