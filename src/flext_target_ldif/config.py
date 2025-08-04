@@ -37,7 +37,7 @@ class FlextTargetLdifConfig(FlextValueObject):
                 "line_length": 78,
                 "base64_encode": False,
                 "include_timestamps": True,
-            }
+            },
         ),
         description="LDIF format options",
     )
