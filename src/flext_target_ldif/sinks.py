@@ -15,7 +15,7 @@ class LDIFSink(BatchSink):
 
     def __init__(
         self,
-        target: object,
+        target,  # Target type from Singer SDK
         stream_name: str,
         schema: dict[str, object],
         key_properties: list[str] | None = None,

@@ -6,7 +6,7 @@ import typing as t
 from datetime import datetime
 
 
-def transform_timestamp(value: t.Any) -> str:
+def transform_timestamp(value: object) -> str:
     """Transform timestamp values to LDAP timestamp format."""
     if value is None:
         return ""
@@ -27,7 +27,7 @@ def transform_timestamp(value: t.Any) -> str:
     return str(value)
 
 
-def transform_boolean(value: t.Any) -> str:
+def transform_boolean(value: object) -> str:
     """Transform boolean values to LDAP boolean format."""
     if value is None:
         return ""
@@ -45,7 +45,7 @@ def transform_boolean(value: t.Any) -> str:
     return str(value)
 
 
-def transform_email(value: t.Any) -> str:
+def transform_email(value: object) -> str:
     """Transform email values to ensure LDAP compatibility."""
     if value is None:
         return ""
@@ -59,7 +59,7 @@ def transform_email(value: t.Any) -> str:
     return ""
 
 
-def transform_phone(value: t.Any) -> str:
+def transform_phone(value: object) -> str:
     """Transform phone numbers to standard format."""
     if value is None:
         return ""
@@ -70,7 +70,7 @@ def transform_phone(value: t.Any) -> str:
     return "".join(c for c in phone_str if c.isdigit() or c in "+- ()")
 
 
-def transform_name(value: t.Any) -> str:
+def transform_name(value: object) -> str:
     """Transform name fields to ensure proper formatting."""
     if value is None:
         return ""
@@ -83,8 +83,8 @@ def transform_name(value: t.Any) -> str:
 
 def normalize_attribute_value(
     attr_name: str,
-    value: t.Any,
-    transformers: dict[str, t.Callable[[t.Any], str]] | None = None,
+    value: object,
+    transformers: dict[str, t.Callable[[object], str]] | None = None,
 ) -> str:
     """Normalize attribute value based on attribute type."""
     if value is None:
@@ -117,13 +117,13 @@ class RecordTransformer:
     def __init__(
         self,
         attribute_mapping: dict[str, str] | None = None,
-        custom_transformers: dict[str, t.Callable[[t.Any], str]] | None = None,
+        custom_transformers: dict[str, t.Callable[[object], str]] | None = None,
     ) -> None:
         """Initialize the record transformer."""
         self.attribute_mapping = attribute_mapping or {}
         self.custom_transformers = custom_transformers or {}
 
-    def transform_record(self, record: dict[str, t.Any]) -> dict[str, str]:
+    def transform_record(self, record: dict[str, object]) -> dict[str, str]:
         """Transform a Singer record to LDAP-compatible format."""
         transformed = {}
 
@@ -152,9 +152,9 @@ class RecordTransformer:
 
         return transformed
 
-    def add_required_attributes(self, record: dict[str, str]) -> dict[str, t.Any]:
+    def add_required_attributes(self, record: dict[str, str]) -> dict[str, object]:
         """Add required LDAP attributes to the record."""
-        result: dict[str, t.Any] = record.copy()
+        result: dict[str, object] = dict(record)
 
         # Ensure objectClass is present
         if "objectclass" not in result:
@@ -176,7 +176,8 @@ class RecordTransformer:
         if "sn" not in result:
             if "cn" in result:
                 # Use last word of cn as surname
-                words = result["cn"].split()
+                cn_value = result["cn"]
+                words = cn_value.split() if isinstance(cn_value, str) else []
                 result["sn"] = words[-1] if words else "Unknown"
             else:
                 result["sn"] = "Unknown"
