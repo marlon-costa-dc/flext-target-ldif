@@ -57,8 +57,11 @@ Documentation = "https://github.com/flext-sh/flext/blob/main/README.md"
 target-ldif = "flext_target_ldif.target:TargetLDIF.cli"
 flext-target-ldif = "flext_target_ldif.target:TargetLDIF.cli"
 
+[tool.ruff]
 extend = "../.ruff-shared.toml"
-lint.isort.known-first-party = ["flext_target_ldif"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["flext_target_ldif"]
 
 [tool.mypy]
 python_version = "3.13"

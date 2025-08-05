@@ -9,6 +9,8 @@ REFACTORED: Complete exception system with 100% coverage and validation.
 from __future__ import annotations
 
 import pytest
+from pydantic import ValidationError
+
 from flext_target_ldif.exceptions import (
     FlextTargetLdifConfigurationError,
     FlextTargetLdifError,
@@ -18,7 +20,6 @@ from flext_target_ldif.exceptions import (
     FlextTargetLdifValidationError,
     FlextTargetLdifWriterError,
 )
-from pydantic import ValidationError
 
 
 class TestFlextTargetLdifError:

@@ -13,11 +13,12 @@ from pathlib import Path
 from unittest.mock import Mock, patch
 
 import pytest
+from pydantic import ValidationError
+
 from flext_target_ldif import FlextTargetLdif, FlextTargetLdifConfig
 from flext_target_ldif.exceptions import FlextTargetLdifConfigurationError
 from flext_target_ldif.sinks import LDIFSink
 from flext_target_ldif.target import TargetLDIF
-from pydantic import ValidationError
 
 
 class TestFlextTargetLdifConfig:
@@ -45,6 +46,7 @@ class TestFlextTargetLdifConfig:
     def test_config_creation_with_custom_values(self) -> None:
         """Test creating config with custom values."""
         import tempfile
+
         with tempfile.TemporaryDirectory() as temp_dir:
             custom_file = f"{temp_dir}/custom.ldif"
             config = FlextTargetLdifConfig(
@@ -69,7 +71,9 @@ class TestFlextTargetLdifConfig:
                 msg: str = f"Expected True, got {config.base64_encode}"
                 raise AssertionError(msg)
             if config.attribute_mapping != {"email": "mail"}:
-                msg: str = f"Expected {{'email': 'mail'}}, got {config.attribute_mapping}"
+                msg: str = (
+                    f"Expected {{'email': 'mail'}}, got {config.attribute_mapping}"
+                )
                 raise AssertionError(msg)
 
     def test_config_immutability(self) -> None:
