@@ -79,9 +79,9 @@ class LDIFSink(BatchSink):
         if self._ldif_writer:
             result = self._ldif_writer.close()
             if not result.success and hasattr(self, "logger"):
-                self.logger.error(f"Failed to close LDIF writer: {result.error}")
+                self.logger.error("Failed to close LDIF writer: %s", result.error)
             elif hasattr(self, "logger"):
-                self.logger.info(f"LDIF file written: {self._output_file}")
+                self.logger.info("LDIF file written: %s", self._output_file)
 
     @property
     def ldif_writer(self) -> LdifWriter:

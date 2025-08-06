@@ -24,8 +24,8 @@ class FlextTargetLdifConfig(FlextValueObject):
         description="Pattern for LDIF file names. Available variables: {stream_name}, {timestamp}",
     )
     dn_template: str = Field(
-        default="uid={uid},ou=users,dc=example,dc=com",
-        description="Template for generating Distinguished Names (DN)",
+        description="Template for generating Distinguished Names (DN) - MUST be configured for production",
+        json_schema_extra={"example": "uid={uid},ou=users,dc=company,dc=local"}
     )
     attribute_mapping: dict[str, str] = Field(
         default_factory=dict,

@@ -49,8 +49,8 @@ class TargetLDIF(Target):
             th.Property(
                 "dn_template",
                 th.StringType,
-                description="Template for generating Distinguished Names (DN)",
-                default="uid={uid},ou=users,dc=example,dc=com",
+                required=True,
+                description="Template for generating Distinguished Names (DN) - MUST be configured for production",
             ),
             th.Property(
                 "attribute_mapping",
