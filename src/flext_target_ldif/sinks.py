@@ -5,7 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 
 # MIGRATED: BatchSink now consolidated in flext-meltano
-from flext_meltano import BatchSink
+from flext_meltano import BatchSink, Target
 
 from flext_target_ldif.writer import LdifWriter
 
@@ -15,7 +15,7 @@ class LDIFSink(BatchSink):
 
     def __init__(
         self,
-        target,  # Target type from Singer SDK
+        target: Target,
         stream_name: str,
         schema: dict[str, object],
         key_properties: list[str] | None = None,
@@ -57,7 +57,7 @@ class LDIFSink(BatchSink):
 
         return self._ldif_writer
 
-    def process_batch(self, context: dict[str, object]) -> None:
+    def process_batch(self, _context: dict[str, object]) -> None:
         """Process a batch of records."""
         # BatchSink handles the batching, we just need to ensure writer is ready
         self._get_ldif_writer()
@@ -65,7 +65,7 @@ class LDIFSink(BatchSink):
     def process_record(
         self,
         record: dict[str, object],
-        context: dict[str, object],
+        _context: dict[str, object],
     ) -> None:
         """Process a single record and write to LDIF."""
         ldif_writer = self._get_ldif_writer()

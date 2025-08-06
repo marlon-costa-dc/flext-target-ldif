@@ -108,6 +108,11 @@ def validate_schema(schema: dict[str, object]) -> dict[str, list[str]]:
         errors["properties"] = ["Schema must define properties"]
         return errors
 
+    # Ensure properties is a dictionary for type safety
+    if not isinstance(properties, dict):
+        errors["properties"] = ["Properties must be a dictionary"]
+        return errors
+
     # Check for ID-like fields
     id_fields = [
         field

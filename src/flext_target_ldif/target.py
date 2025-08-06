@@ -66,6 +66,7 @@ class TargetLDIF(Target):
     def __init__(
         self,
         config: dict[str, object] | None = None,
+        *,
         parse_env_config: bool = False,
         validate_config: bool = True,
     ) -> None:

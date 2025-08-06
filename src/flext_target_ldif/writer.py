@@ -87,6 +87,7 @@ class LdifWriter:
                             )
 
                         entry = FlextLdifEntry(
+                            id=dn,  # Use DN as unique identifier
                             dn=FlextLdifDistinguishedName(value=dn),
                             attributes=FlextLdifAttributes(attributes=attr_dict),
                         )
@@ -96,7 +97,7 @@ class LdifWriter:
                         continue
 
                 # Use real flext-ldif API to write entries
-                ldif_content = flext_ldif_write(ldif_entries, str(self.output_file))
+                ldif_content = flext_ldif_write(ldif_entries)
 
                 # Write to file
                 self.output_file.write_text(ldif_content, encoding="utf-8")

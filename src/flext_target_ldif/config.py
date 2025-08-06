@@ -54,8 +54,8 @@ class FlextTargetLdifConfig(FlextValueObject):
         try:
             path.mkdir(parents=True, exist_ok=True)
         except (OSError, PermissionError) as e:
-            msg: str = f"Cannot create output directory: {e}"
-            raise ValueError(msg) from e
+            error_msg: str = f"Cannot create output directory: {e}"
+            raise ValueError(error_msg) from e
 
         return v
 
