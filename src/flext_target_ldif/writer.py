@@ -14,10 +14,10 @@ from typing import TYPE_CHECKING, Self
 
 from flext_core import FlextResult, get_logger
 from flext_ldif import (
+    FlextLdifAPI,
     FlextLdifAttributes,
     FlextLdifDistinguishedName,
     FlextLdifEntry,
-    flext_ldif_write,
 )
 
 from flext_target_ldif.exceptions import FlextTargetLdifWriterError
@@ -47,6 +47,7 @@ class LdifWriter:
         self.schema = schema or {}
 
         # Use flext-ldif API for writing
+        self._ldif_api = FlextLdifAPI()
         self._records: list[dict[str, object]] = []
         self._record_count = 0
 
@@ -97,7 +98,10 @@ class LdifWriter:
                         continue
 
                 # Use real flext-ldif API to write entries
-                ldif_content = flext_ldif_write(ldif_entries)
+                write_result = self._ldif_api.write(ldif_entries)
+                if not write_result.success:
+                    return FlextResult.fail(f"LDIF write failed: {write_result.error}")
+                ldif_content = write_result.data or ""
 
                 # Write to file
                 self.output_file.write_text(ldif_content, encoding="utf-8")

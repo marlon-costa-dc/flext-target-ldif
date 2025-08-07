@@ -1,29 +1,44 @@
-"""Data transformation utilities for LDIF target."""
+"""Data transformation utilities for LDIF target using flext-ldap infrastructure.
+
+Eliminates code duplication by using LDAP transformation functionality from flext-ldap.
+"""
 
 from __future__ import annotations
 
 import typing as t
 from datetime import datetime
 
+# Use flext-ldap for LDAP-specific transformations instead of duplicating
+from flext_ldap.utils import (
+    flext_ldap_format_generalized_time,
+    flext_ldap_parse_generalized_time,
+)
+
 
 def transform_timestamp(value: object) -> str:
-    """Transform timestamp values to LDAP timestamp format."""
+    """Transform timestamp values to LDAP timestamp format using flext-ldap."""
     if value is None:
         return ""
 
     if isinstance(value, datetime):
-        # LDAP GeneralizedTime format: YYYYMMDDHHMMSSZ
-        return value.strftime("%Y%m%d%H%M%SZ")
+        # Use flext-ldap timestamp formatting - no duplication
+        return flext_ldap_format_generalized_time(value)
 
     if isinstance(value, str):
         try:
-            # Try to parse ISO format
+            # Try to parse ISO format first, then use flext-ldap parsing
             dt = datetime.fromisoformat(value.removesuffix("Z") + "+00:00")
-            return dt.strftime("%Y%m%d%H%M%SZ")
+            return flext_ldap_format_generalized_time(dt)
         except ValueError:
-            # Return as-is if not parseable
-            return value
+            try:
+                # Try parsing as LDAP generalized time
+                dt = flext_ldap_parse_generalized_time(value)
+                return flext_ldap_format_generalized_time(dt)
+            except (ValueError, TypeError):
+                # Return as-is if not parseable
+                return value
 
+    # Fallback - convert to string for other types
     return str(value)
 
 
@@ -81,6 +96,23 @@ def transform_name(value: object) -> str:
     return " ".join(word.capitalize() for word in name_str.split())
 
 
+def _get_builtin_transformer(attr_name: str) -> t.Callable[[object], str] | None:
+    """Get built-in transformer function for attribute name."""
+    attr_lower = attr_name.lower()
+
+    if attr_lower in {"mail", "email"}:
+        return transform_email
+    if attr_lower in {"telephonenumber", "phone", "mobile"}:
+        return transform_phone
+    if attr_lower in {"givenname", "sn", "cn", "displayname"}:
+        return transform_name
+    if attr_lower in {"createtimestamp", "modifytimestamp"}:
+        return transform_timestamp
+    if attr_lower.endswith("boolean") or attr_lower.startswith("is"):
+        return transform_boolean
+    return None
+
+
 def normalize_attribute_value(
     attr_name: str,
     value: object,
@@ -94,19 +126,11 @@ def normalize_attribute_value(
     if transformers and attr_name in transformers:
         return transformers[attr_name](value)
 
-    # Built-in transformations based on attribute name
-    attr_lower = attr_name.lower()
+    # Try built-in transformations
+    builtin_transformer = _get_builtin_transformer(attr_name)
+    if builtin_transformer:
+        return builtin_transformer(value)
 
-    if attr_lower in {"mail", "email"}:
-        return transform_email(value)
-    if attr_lower in {"telephonenumber", "phone", "mobile"}:
-        return transform_phone(value)
-    if attr_lower in {"givenname", "sn", "cn", "displayname"}:
-        return transform_name(value)
-    if attr_lower in {"createtimestamp", "modifytimestamp"}:
-        return transform_timestamp(value)
-    if attr_lower.endswith("boolean") or attr_lower.startswith("is"):
-        return transform_boolean(value)
     # Default: convert to string and strip whitespace
     return str(value).strip()
 

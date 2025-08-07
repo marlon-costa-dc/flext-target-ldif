@@ -1,8 +1,19 @@
-"""Data validation utilities for LDIF target."""
+"""Data validation utilities for LDIF target using flext-ldap infrastructure.
+
+Eliminates code duplication by using LDAP validation functionality from flext-ldap.
+"""
 
 from __future__ import annotations
 
 import re
+
+# Use flext-ldap for LDAP-specific validation instead of duplicating
+from flext_ldap.utils import (
+    flext_ldap_normalize_attribute_name,
+    flext_ldap_validate_attribute_name,
+    flext_ldap_validate_attribute_value,
+    flext_ldap_validate_dn,
+)
 
 
 class ValidationError(Exception):
@@ -10,43 +21,37 @@ class ValidationError(Exception):
 
 
 def validate_dn_component(value: str) -> bool:
-    """Validate a DN component value."""
+    """Validate a DN component value using flext-ldap infrastructure."""
     if not value:
         return False
 
-    # Basic validation - no special LDAP characters
-    invalid_chars = [",", "=", "+", "<", ">", "#", ";", "\\", '"', "\n", "\r"]
-
-    return all(char not in value for char in invalid_chars)
+    # Use flext-ldap DN validation - no need to duplicate logic
+    return flext_ldap_validate_dn(f"test={value}")
 
 
 def validate_attribute_name(name: str) -> bool:
-    """Validate LDAP attribute name."""
-    if not name:
-        return False
+    """Validate LDAP attribute name using flext-ldap infrastructure."""
+    # ELIMINATED DUPLICATION: Use flext-ldap validation instead of local logic
+    return flext_ldap_validate_attribute_name(name)
 
-    # LDAP attribute names: letters, digits, hyphens
-    # Must start with letter
-    pattern = r"^[a-zA-Z][a-zA-Z0-9\-]*$"
-    return bool(re.match(pattern, name))
+
+# Constants for validation limits
+MAX_ATTRIBUTE_VALUE_LENGTH = 1000
 
 
 def validate_attribute_value(value: object) -> bool:
-    """Validate LDAP attribute value."""
-    if value is None:
-        return True
-
-    # Convert to string for validation
-    str_value = str(value)
-
-    # Basic length check (LDAP typically has limits)
-    return len(str_value) <= 1000  # Conservative limit
+    """Validate LDAP attribute value using flext-ldap infrastructure."""
+    # ELIMINATED DUPLICATION: Use flext-ldap validation instead of local logic
+    return flext_ldap_validate_attribute_value(value, max_length=MAX_ATTRIBUTE_VALUE_LENGTH)
 
 
 def sanitize_attribute_name(name: str) -> str:
-    """Sanitize field name to be LDAP-compatible."""
+    """Sanitize field name to be LDAP-compatible using flext-ldap normalization."""
+    # Use flext-ldap normalization as base
+    normalized = flext_ldap_normalize_attribute_name(name)
+
     # Remove invalid characters
-    sanitized = re.sub(r"[^a-zA-Z0-9\-]", "", name)
+    sanitized = re.sub(r"[^a-zA-Z0-9\-]", "", normalized)
 
     # Ensure starts with letter
     if sanitized and not sanitized[0].isalpha():

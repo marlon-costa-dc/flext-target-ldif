@@ -19,7 +19,22 @@ from flext_core import FlextContainer
 
 # ==================== FLEXT_TARGET_LDIF-SPECIFIC DI UTILITIES ====================
 
-_flext_target_ldif_container_instance: FlextContainer | None = None
+
+class _ContainerManager:
+    """Container manager to avoid global statement issues."""
+
+    def __init__(self) -> None:
+        self.container: FlextContainer | None = None
+
+    def get_container(self) -> FlextContainer:
+        """Get or create container instance."""
+        if self.container is None:
+            self.container = FlextContainer()
+        return self.container
+
+
+# Module-level container manager
+_container_manager = _ContainerManager()
 
 
 def get_flext_target_ldif_container() -> FlextContainer:
@@ -29,10 +44,7 @@ def get_flext_target_ldif_container() -> FlextContainer:
         FlextContainer: Official container from flext-core.
 
     """
-    global _flext_target_ldif_container_instance
-    if _flext_target_ldif_container_instance is None:
-        _flext_target_ldif_container_instance = FlextContainer()
-    return _flext_target_ldif_container_instance
+    return _container_manager.get_container()
 
 
 def configure_flext_target_ldif_dependencies() -> None:
@@ -41,8 +53,7 @@ def configure_flext_target_ldif_dependencies() -> None:
 
     with contextlib.suppress(ImportError):
         # Register module-specific dependencies
-        # TODO: Add module-specific service registrations here
-
+        # Future enhancement: Add module-specific service registrations here
         # Dependencies configured successfully
         pass
 

@@ -9,6 +9,9 @@ from __future__ import annotations
 from pathlib import Path
 
 from flext_core import FlextResult, FlextValueObject
+
+# Use flext-ldap for DN validation - no duplication
+from flext_ldap.utils import flext_ldap_validate_dn
 from pydantic import Field, field_validator
 
 
@@ -25,7 +28,7 @@ class FlextTargetLdifConfig(FlextValueObject):
     )
     dn_template: str = Field(
         description="Template for generating Distinguished Names (DN) - MUST be configured for production",
-        json_schema_extra={"example": "uid={uid},ou=users,dc=company,dc=local"}
+        json_schema_extra={"example": "uid={uid},ou=users,dc=company,dc=local"},
     )
     attribute_mapping: dict[str, str] = Field(
         default_factory=dict,
@@ -73,6 +76,10 @@ class FlextTargetLdifConfig(FlextValueObject):
 
         return v
 
+    def validate_business_rules(self) -> FlextResult[None]:
+        """Validate business rules - required by FlextValueObject."""
+        return self.validate_domain_rules()
+
     def validate_domain_rules(self) -> FlextResult[None]:
         """Validate domain-specific business rules."""
         try:
@@ -84,10 +91,15 @@ class FlextTargetLdifConfig(FlextValueObject):
                 except (OSError, PermissionError) as e:
                     return FlextResult.fail(f"Cannot access output path: {e}")
 
-            # Validate DN template has required structure
-            if not self.dn_template or "=" not in self.dn_template:
+            # Use flext-ldap for DN validation - NO local duplication
+            if not self.dn_template:
+                return FlextResult.fail("DN template cannot be empty")
+
+            # For template validation, create a sample DN with dummy values
+            sample_dn = self.dn_template.replace("{uid}", "testuser").replace("{cn}", "Test User")
+            if not flext_ldap_validate_dn(sample_dn):
                 return FlextResult.fail(
-                    "DN template must contain at least one attribute=value pair",
+                    "DN template format is invalid - must follow LDAP DN structure",
                 )
 
             return FlextResult.ok(None)
