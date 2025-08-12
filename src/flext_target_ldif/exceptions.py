@@ -51,7 +51,11 @@ class FlextTargetLdifTransformationError(FlextProcessingError):
         if transformation_stage is not None:
             context["transformation_stage"] = transformation_stage
 
-        super().__init__(f"LDIF target transformation: {message}", **context)
+        super().__init__(
+            f"LDIF target transformation: {message}",
+            business_rule="ldif_transformation",
+            context=context,
+        )
 
 
 class FlextTargetLdifInfrastructureError(FlextTargetLdifError):
@@ -132,7 +136,7 @@ class FlextTargetLdifSchemaError(FlextValidationError):
 
         super().__init__(
             f"LDIF target schema: {message}",
-            validation_details=validation_details,
+            validation_details=dict(validation_details) if validation_details else None,
             context=context,
         )
 

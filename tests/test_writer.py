@@ -596,12 +596,14 @@ class TestLdifWriterContextManager:
         ) as tmp:
             tmp_path = Path(tmp.name)
 
+        def _raise_test_exception() -> None:
+            msg = "Test exception"
+            raise ValueError(msg)
+
         try:
             with LdifWriter(output_file=tmp_path) as writer:
                 writer.write_record({"uid": "jdoe", "cn": "John Doe"})
-                # Simulate an exception
-                msg = "Test exception"
-                raise ValueError(msg)
+                _raise_test_exception()
         except ValueError:
             pass
 

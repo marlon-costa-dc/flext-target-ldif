@@ -4,6 +4,15 @@
 **Integration**: Complete flext-meltano ecosystem integration with ALL facilities utilized
 **Quality**: 100% type safety, 90%+ test coverage, zero-tolerance quality standards
 
+## PEP8 Module Organization:
+
+**Consolidated Architecture** (following established 12-project pattern):
+- target_config: Configuration management with FlextValueObject patterns
+- target_client: Main Singer Target and Sink implementations
+- target_models: Data structures, validation, and transformations
+- target_exceptions: Exception hierarchy using flext-core factory patterns
+- target_services: Dependency injection and CLI utilities
+
 ## Enterprise Integration Features:
 
 1. **Complete flext-meltano Integration**: Uses ALL flext-meltano facilities
@@ -71,19 +80,79 @@ from flext_meltano import (
     singer_typing,
 )
 
-# Local implementations with complete flext-meltano integration
-from flext_target_ldif.config import FlextTargetLdifConfig
-from flext_target_ldif.sinks import LDIFSink
-from flext_target_ldif.target import TargetLDIF
-from flext_target_ldif.writer import LdifWriter
+# === PEP8 CONSOLIDATED MODULE IMPORTS ===
+# Import from consolidated PEP8 modules for better organization
+from flext_target_ldif.target_client import (
+    LDIFSink,
+    LdifWriter,
+    TargetClient,
+    TargetLDIF,
+    TargetSink,
+    TargetWriter,
+)
+from flext_target_ldif.target_config import FlextTargetLdifConfig, TargetConfig
+from flext_target_ldif.target_exceptions import (
+    FlextTargetLdifError,
+    FlextTargetLdifErrorDetails,
+    FlextTargetLdifFileError,
+    FlextTargetLdifInfrastructureError,
+    FlextTargetLdifSchemaError,
+    FlextTargetLdifTransformationError,
+    FlextTargetLdifWriterError,
+    TargetError,
+    TargetErrorDetails,
+    TargetFileError,
+    TargetInfrastructureError,
+    TargetSchemaError,
+    TargetTransformationError,
+    TargetWriterError,
+)
+from flext_target_ldif.target_models import (
+    RecordTransformer,
+    TargetTransformer,
+    TargetValidator,
+    ValidationError,
+    normalize_attribute_value,
+    sanitize_attribute_name,
+    transform_boolean,
+    transform_email,
+    transform_name,
+    transform_phone,
+    transform_timestamp,
+    validate_attribute_name,
+    validate_attribute_value,
+    validate_dn_component,
+    validate_record,
+    validate_schema,
+)
+from flext_target_ldif.target_services import (
+    TargetCLI,
+    TargetContainer,
+    TargetService,
+    cli_main,
+    config_target_dependencies,
+    configure_flext_target_ldif_dependencies,
+    get_flext_target_ldif_container,
+    get_flext_target_ldif_service,
+)
 
-# Enterprise-grade aliases for backward compatibility
-FlextLDIFTarget = TargetLDIF
-FlextLDIFTargetConfig = FlextTargetLdifConfig
-FlextTargetLDIF = TargetLDIF
-FlextTargetLDIFConfig = FlextTargetLdifConfig
-LDIFTarget = TargetLDIF
-TargetLDIFConfig = FlextTargetLdifConfig
+# === BACKWARD COMPATIBILITY IMPORTS ===
+# Direct imports for existing code compatibility
+from flext_target_ldif.config import FlextTargetLdifConfig as _FlextTargetLdifConfig
+from flext_target_ldif.sinks import LDIFSink as _LDIFSink
+from flext_target_ldif.target import TargetLDIF as _TargetLDIF
+from flext_target_ldif.writer import LdifWriter as _LdifWriter
+
+# === BACKWARD COMPATIBILITY ALIASES ===
+# Ensure all existing code continues to work
+FlextLDIFTarget = _TargetLDIF
+FlextLDIFTargetConfig = _FlextTargetLdifConfig
+FlextTargetLDIF = _TargetLDIF
+FlextTargetLDIFConfig = _FlextTargetLdifConfig
+LDIFTarget = _TargetLDIF
+TargetLDIFConfig = _FlextTargetLdifConfig
+
+# FlextTargetLdifConfig already imported from target_config module above
 
 # Version following semantic versioning
 try:
@@ -93,56 +162,118 @@ except importlib.metadata.PackageNotFoundError:
 
 __version_info__ = tuple(int(x) for x in __version__.split(".") if x.isdigit())
 
-# Complete public API exports
+# Complete public API exports with PEP8 consolidation and backward compatibility
 __all__: list[str] = [
+    "annotations", "FlextError", "FlextResult", "FlextValueObject", "get_logger", "BatchSink",
+    "FlextMeltanoBaseService", "FlextMeltanoBridge", "FlextMeltanoConfig", "FlextMeltanoEvent",
+    "FlextMeltanoTargetService", "OAuthAuthenticator", "PropertiesList", "Property", "Sink", "SQLSink",
+    "Stream", "Tap", "Target", "create_meltano_target_service", "get_tap_test_class", "singer_typing",
+    "LDIFSink", "LdifWriter", "TargetClient", "TargetLDIF", "TargetSink", "TargetWriter",
+    "FlextTargetLdifConfig", "TargetConfig", "FlextTargetLdifError", "FlextTargetLdifErrorDetails",
+    "FlextTargetLdifFileError", "FlextTargetLdifInfrastructureError", "FlextTargetLdifSchemaError",
+    "FlextTargetLdifTransformationError", "FlextTargetLdifWriterError", "TargetError",
+    "TargetErrorDetails", "TargetFileError", "TargetInfrastructureError", "TargetSchemaError",
+    "TargetTransformationError", "TargetWriterError", "RecordTransformer", "TargetTransformer",
+    "TargetValidator", "ValidationError", "normalize_attribute_value", "sanitize_attribute_name",
+    "transform_boolean", "transform_email", "transform_name", "transform_phone", "transform_timestamp",
+    "validate_attribute_name", "validate_attribute_value", "validate_dn_component", "validate_record",
+    "validate_schema", "TargetCLI", "TargetContainer", "TargetService", "cli_main",
+    "config_target_dependencies", "configure_flext_target_ldif_dependencies",
+    "get_flext_target_ldif_container", "get_flext_target_ldif_service", "FlextLDIFTarget",
+    "FlextLDIFTargetConfig", "FlextTargetLDIF", "FlextTargetLDIFConfig", "LDIFTarget",
+    "TargetLDIFConfig", "__version_info__",
+] = [
+    # === FLEXT-MELTANO RE-EXPORTS ===
     "BatchSink",
-    # === FLEXT-CORE RE-EXPORTS ===
-    "FlextError",
-    # === BACKWARD COMPATIBILITY ===
-    "FlextLDIFTarget",
-    "FlextLDIFTargetConfig",
     "FlextMeltanoBaseService",
-    "FlextMeltanoBaseService",
-    # Bridge integration
     "FlextMeltanoBridge",
-    # Configuration patterns
     "FlextMeltanoConfig",
     "FlextMeltanoEvent",
-    # "RESTStream",  # Not available yet
-    # Enterprise services
     "FlextMeltanoTargetService",
-    # Enterprise services (add to exports)
-    "FlextMeltanoTargetService",
-    "FlextResult",
-    "FlextTargetLDIF",
-    "FlextTargetLDIFConfig",
-    "FlextTargetLdifConfig",
-    "FlextValueObject",
-    "LDIFSink",
-    "LDIFTarget",
-    "LdifWriter",
-    # Authentication
     "OAuthAuthenticator",
     "PropertiesList",
     "Property",
     "SQLSink",
     "Sink",
-    # === FLEXT-MELTANO COMPLETE RE-EXPORTS ===
-    # Singer SDK core classes
     "Stream",
     "Tap",
     "Target",
-    # === PRIMARY TARGET CLASSES ===
+    "create_meltano_target_service",
+    "get_tap_test_class",
+    "singer_typing",
+
+    # === FLEXT-CORE RE-EXPORTS ===
+    "FlextError",
+    "FlextResult",
+    "FlextValueObject",
+    "get_logger",
+
+    # === PEP8 CONSOLIDATED MODULES (Primary Interface) ===
+    # Configuration
+    "FlextTargetLdifConfig",
+    "TargetConfig",
+
+    # Client (Target + Sink + Writer)
+    "LDIFSink",
+    "LdifWriter",
+    "TargetClient",
     "TargetLDIF",
+    "TargetSink",
+    "TargetWriter",
+
+    # Models (Validation + Transformation)
+    "RecordTransformer",
+    "TargetTransformer",
+    "TargetValidator",
+    "ValidationError",
+    "normalize_attribute_value",
+    "sanitize_attribute_name",
+    "transform_boolean",
+    "transform_email",
+    "transform_name",
+    "transform_phone",
+    "transform_timestamp",
+    "validate_attribute_name",
+    "validate_attribute_value",
+    "validate_dn_component",
+    "validate_record",
+    "validate_schema",
+
+    # Exceptions
+    "FlextTargetLdifError",
+    "FlextTargetLdifErrorDetails",
+    "FlextTargetLdifFileError",
+    "FlextTargetLdifInfrastructureError",
+    "FlextTargetLdifSchemaError",
+    "FlextTargetLdifTransformationError",
+    "FlextTargetLdifWriterError",
+    "TargetError",
+    "TargetErrorDetails",
+    "TargetFileError",
+    "TargetInfrastructureError",
+    "TargetSchemaError",
+    "TargetTransformationError",
+    "TargetWriterError",
+
+    # Services (DI + CLI)
+    "TargetCLI",
+    "TargetContainer",
+    "TargetService",
+    "cli_main",
+    "config_target_dependencies",
+    "configure_flext_target_ldif_dependencies",
+    "get_flext_target_ldif_container",
+    "get_flext_target_ldif_service",
+
+    # === BACKWARD COMPATIBILITY ALIASES ===
+    "FlextLDIFTarget",
+    "FlextLDIFTargetConfig",
+    "FlextTargetLDIF",
+    "FlextTargetLDIFConfig",
+    "LDIFTarget",
     "TargetLDIFConfig",
+
     # === METADATA ===
     "__version__",
     "__version_info__",
-    "create_meltano_target_service",
-    "create_meltano_target_service",
-    "get_logger",
-    # Testing
-    "get_tap_test_class",
-    # Singer typing
-    "singer_typing",
 ]
