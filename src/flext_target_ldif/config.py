@@ -97,7 +97,8 @@ class FlextTargetLdifConfig(FlextValueObject):
 
             # For template validation, create a sample DN with dummy values
             sample_dn = self.dn_template.replace("{uid}", "testuser").replace(
-                "{cn}", "Test User",
+                "{cn}",
+                "Test User",
             )
             if not flext_ldap_validate_dn(sample_dn):
                 return FlextResult.fail(

@@ -5,4 +5,4 @@ Standardizes imports to use flext_target_ldif.models across the codebase.
 
 from __future__ import annotations
 
-from .target_models import *  # noqa: F401,F403
+from .target_models import *  # noqa: F403
