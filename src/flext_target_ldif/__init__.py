@@ -107,7 +107,7 @@ from flext_target_ldif.target_exceptions import (
     TargetTransformationError,
     TargetWriterError,
 )
-from flext_target_ldif.target_models import (
+from flext_target_ldif.models import (
     RecordTransformer,
     TargetTransformer,
     TargetValidator,
