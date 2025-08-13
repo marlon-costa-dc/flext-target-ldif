@@ -9,10 +9,6 @@ import typing as t
 from datetime import datetime
 
 # Use flext-ldap for LDAP-specific transformations instead of duplicating
-from flext_ldap.utils import (
-    flext_ldap_format_generalized_time,
-    flext_ldap_parse_generalized_time,
-)
 
 
 def transform_timestamp(value: object) -> str:
@@ -21,22 +17,17 @@ def transform_timestamp(value: object) -> str:
         return ""
 
     if isinstance(value, datetime):
-        # Use flext-ldap timestamp formatting - no duplication
-        return flext_ldap_format_generalized_time(value)
+        # ISO 8601 representation compatible with many systems
+        return value.isoformat()
 
     if isinstance(value, str):
         try:
             # Try to parse ISO format first, then use flext-ldap parsing
             dt = datetime.fromisoformat(value.removesuffix("Z") + "+00:00")
-            return flext_ldap_format_generalized_time(dt)
+            return dt.isoformat()
         except ValueError:
-            try:
-                # Try parsing as LDAP generalized time
-                dt = flext_ldap_parse_generalized_time(value)
-                return flext_ldap_format_generalized_time(dt)
-            except (ValueError, TypeError):
-                # Return as-is if not parseable
-                return value
+            # Return as-is if not parseable
+            return value
 
     # Fallback - convert to string for other types
     return str(value)

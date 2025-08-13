@@ -9,7 +9,7 @@ import re
 
 # Use flext-ldap for LDAP-specific validation instead of duplicating
 from flext_ldap.utils import (
-    flext_ldap_normalize_attribute_name,
+    flext_ldap_sanitize_attribute_name,
     flext_ldap_validate_attribute_name,
     flext_ldap_validate_attribute_value,
     flext_ldap_validate_dn,
@@ -42,13 +42,16 @@ MAX_ATTRIBUTE_VALUE_LENGTH = 1000
 def validate_attribute_value(value: object) -> bool:
     """Validate LDAP attribute value using flext-ldap infrastructure."""
     # ELIMINATED DUPLICATION: Use flext-ldap validation instead of local logic
-    return flext_ldap_validate_attribute_value(value, max_length=MAX_ATTRIBUTE_VALUE_LENGTH)
+    # flext_ldap_validate_attribute_value does not accept max_length; enforce locally
+    if isinstance(value, str) and len(value) > MAX_ATTRIBUTE_VALUE_LENGTH:
+        return False
+    return flext_ldap_validate_attribute_value(value)
 
 
 def sanitize_attribute_name(name: str) -> str:
     """Sanitize field name to be LDAP-compatible using flext-ldap normalization."""
     # Use flext-ldap normalization as base
-    normalized = flext_ldap_normalize_attribute_name(name)
+    normalized = flext_ldap_sanitize_attribute_name(name)
 
     # Remove invalid characters
     sanitized = re.sub(r"[^a-zA-Z0-9\-]", "", normalized)

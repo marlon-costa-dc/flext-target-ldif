@@ -164,25 +164,6 @@ __version_info__ = tuple(int(x) for x in __version__.split(".") if x.isdigit())
 
 # Complete public API exports with PEP8 consolidation and backward compatibility
 __all__: list[str] = [
-    "annotations", "FlextError", "FlextResult", "FlextValueObject", "get_logger", "BatchSink",
-    "FlextMeltanoBaseService", "FlextMeltanoBridge", "FlextMeltanoConfig", "FlextMeltanoEvent",
-    "FlextMeltanoTargetService", "OAuthAuthenticator", "PropertiesList", "Property", "Sink", "SQLSink",
-    "Stream", "Tap", "Target", "create_meltano_target_service", "get_tap_test_class", "singer_typing",
-    "LDIFSink", "LdifWriter", "TargetClient", "TargetLDIF", "TargetSink", "TargetWriter",
-    "FlextTargetLdifConfig", "TargetConfig", "FlextTargetLdifError", "FlextTargetLdifErrorDetails",
-    "FlextTargetLdifFileError", "FlextTargetLdifInfrastructureError", "FlextTargetLdifSchemaError",
-    "FlextTargetLdifTransformationError", "FlextTargetLdifWriterError", "TargetError",
-    "TargetErrorDetails", "TargetFileError", "TargetInfrastructureError", "TargetSchemaError",
-    "TargetTransformationError", "TargetWriterError", "RecordTransformer", "TargetTransformer",
-    "TargetValidator", "ValidationError", "normalize_attribute_value", "sanitize_attribute_name",
-    "transform_boolean", "transform_email", "transform_name", "transform_phone", "transform_timestamp",
-    "validate_attribute_name", "validate_attribute_value", "validate_dn_component", "validate_record",
-    "validate_schema", "TargetCLI", "TargetContainer", "TargetService", "cli_main",
-    "config_target_dependencies", "configure_flext_target_ldif_dependencies",
-    "get_flext_target_ldif_container", "get_flext_target_ldif_service", "FlextLDIFTarget",
-    "FlextLDIFTargetConfig", "FlextTargetLDIF", "FlextTargetLDIFConfig", "LDIFTarget",
-    "TargetLDIFConfig", "__version_info__",
-] = [
     # === FLEXT-MELTANO RE-EXPORTS ===
     "BatchSink",
     "FlextMeltanoBaseService",
@@ -201,18 +182,15 @@ __all__: list[str] = [
     "create_meltano_target_service",
     "get_tap_test_class",
     "singer_typing",
-
     # === FLEXT-CORE RE-EXPORTS ===
     "FlextError",
     "FlextResult",
     "FlextValueObject",
     "get_logger",
-
     # === PEP8 CONSOLIDATED MODULES (Primary Interface) ===
     # Configuration
     "FlextTargetLdifConfig",
     "TargetConfig",
-
     # Client (Target + Sink + Writer)
     "LDIFSink",
     "LdifWriter",
@@ -220,7 +198,6 @@ __all__: list[str] = [
     "TargetLDIF",
     "TargetSink",
     "TargetWriter",
-
     # Models (Validation + Transformation)
     "RecordTransformer",
     "TargetTransformer",
@@ -238,7 +215,6 @@ __all__: list[str] = [
     "validate_dn_component",
     "validate_record",
     "validate_schema",
-
     # Exceptions
     "FlextTargetLdifError",
     "FlextTargetLdifErrorDetails",
@@ -254,7 +230,6 @@ __all__: list[str] = [
     "TargetSchemaError",
     "TargetTransformationError",
     "TargetWriterError",
-
     # Services (DI + CLI)
     "TargetCLI",
     "TargetContainer",
@@ -264,7 +239,6 @@ __all__: list[str] = [
     "configure_flext_target_ldif_dependencies",
     "get_flext_target_ldif_container",
     "get_flext_target_ldif_service",
-
     # === BACKWARD COMPATIBILITY ALIASES ===
     "FlextLDIFTarget",
     "FlextLDIFTargetConfig",
@@ -272,7 +246,6 @@ __all__: list[str] = [
     "FlextTargetLDIFConfig",
     "LDIFTarget",
     "TargetLDIFConfig",
-
     # === METADATA ===
     "__version__",
     "__version_info__",

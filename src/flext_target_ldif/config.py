@@ -96,7 +96,9 @@ class FlextTargetLdifConfig(FlextValueObject):
                 return FlextResult.fail("DN template cannot be empty")
 
             # For template validation, create a sample DN with dummy values
-            sample_dn = self.dn_template.replace("{uid}", "testuser").replace("{cn}", "Test User")
+            sample_dn = self.dn_template.replace("{uid}", "testuser").replace(
+                "{cn}", "Test User",
+            )
             if not flext_ldap_validate_dn(sample_dn):
                 return FlextResult.fail(
                     "DN template format is invalid - must follow LDAP DN structure",
