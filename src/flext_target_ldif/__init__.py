@@ -1,46 +1,4 @@
-"""FLEXT Target LDIF - Enterprise Singer Target for LDIF Data Export.
-
-**Architecture**: Production-ready Singer target implementing Clean Architecture, DDD, and enterprise patterns
-**Integration**: Complete flext-meltano ecosystem integration with ALL facilities utilized
-**Quality**: 100% type safety, 90%+ test coverage, zero-tolerance quality standards
-
-## PEP8 Module Organization:
-
-**Consolidated Architecture** (following established 12-project pattern):
-- target_config: Configuration management with FlextValueObject patterns
-- target_client: Main Singer Target and Sink implementations
-- target_models: Data structures, validation, and transformations
-- target_exceptions: Exception hierarchy using flext-core factory patterns
-- target_services: Dependency injection and CLI utilities
-
-## Enterprise Integration Features:
-
-1. **Complete flext-meltano Integration**: Uses ALL flext-meltano facilities
-   - FlextMeltanoTargetService base class for enterprise patterns
-   - Centralized Singer SDK imports and typing
-   - Common schema definitions from flext-meltano.common_schemas
-   - Enterprise bridge integration for Go ↔ Python communication
-
-2. **Foundation Library Integration**: Full flext-core pattern adoption
-   - FlextResult railway-oriented programming throughout
-   - Enterprise logging with FlextLogger
-   - Dependency injection with flext-core container
-   - FlextConfig for configuration management
-
-3. **LDIF Infrastructure Integration**: Complete flext-ldif utilization
-   - Uses real LDIF processing from flext-ldif infrastructure
-   - Leverages flext-ldif format validation and generation
-   - Enterprise-grade LDIF export strategies
-
-4. **Production Readiness**: Zero-tolerance quality standards
-   - 100% type safety with strict MyPy compliance
-   - 90%+ test coverage with comprehensive test suite
-   - All lint rules passing with Ruff
-   - Security scanning with Bandit and pip-audit
-
-Copyright (c) 2025 FLEXT Team. All rights reserved.
-SPDX-License-Identifier: MIT
-"""
+"""Enterprise Singer Target for LDIF data export."""
 
 from __future__ import annotations
 
