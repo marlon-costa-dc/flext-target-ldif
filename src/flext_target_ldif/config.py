@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from flext_core import FlextResult, FlextBaseConfigModel
+from flext_core import FlextBaseConfigModel, FlextResult
 
 # Use flext-ldap for DN validation - no duplication
 from flext_ldap.utils import flext_ldap_validate_dn
