@@ -10,10 +10,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Core Components
 
-- **TargetLDIF** (`target.py`): Main Singer target implementation using the flext-meltano framework
-- **LDIFSink** (`sinks.py`): Singer sink for processing records and batching writes
-- **LdifWriter** (`writer.py`): Core LDIF file writer using flext-ldif infrastructure
-- **FlextTargetLdifConfig** (`config.py`): Configuration classes with validation using flext-core patterns
+- **TargetLDIF** (`target.py`): Main Singer target implementation inheriting from flext-meltano.Target. Uses centralized file-based schema from `create_file_tap_schema()` with LDIF-specific properties.
+- **LDIFSink** (`sinks.py`): Singer sink inheriting from flext-meltano.BatchSink for processing records and batching writes. Manages LDIF writer lifecycle and error handling using FlextResult patterns.
+- **LdifWriter** (`writer.py`): Core LDIF file writer that leverages flext-ldif infrastructure for actual LDIF processing. Handles record transformation and file I/O.
+- **Configuration** (`config.py`): Uses centralized schema with LDIF-specific extensions including DN templates, attribute mapping, and LDIF formatting options.
 
 ### Technology Stack
 
@@ -54,34 +54,32 @@ make test                  # Pytest with 90% coverage requirement
 
 ```bash
 # Comprehensive testing
-make test                   # All tests with coverage report
-make test-unit             # Unit tests only
+make test                   # All tests with coverage report (90% minimum)
+make test-unit             # Unit tests only (excludes integration)
 make test-integration      # Integration tests only
 make test-singer           # Singer protocol tests
-make coverage              # Generate HTML coverage report
+make test-fast             # Tests without coverage reporting
+make coverage-html         # Generate HTML coverage report
 
 # Test with specific markers
 pytest -m unit             # Unit tests only
 pytest -m integration      # Integration tests only
-pytest -m ldif             # LDIF-specific tests
 pytest -m singer           # Singer protocol tests
-pytest -m slow             # Slow running tests
 ```
 
 ### Singer Target Operations
 
 ```bash
 # Target functionality
-make target-test           # Test basic target functionality
-make target-validate       # Validate target configuration
-make target-schema         # Validate LDIF schema
-make target-run            # Run LDIF data export with test data
-make target-run-debug      # Run with debug logging
-make target-dry-run        # Run in dry-run mode
+make test-target           # Test basic target functionality (--about, --version)
+make validate-target-config # Validate target configuration JSON
+make load                  # Run target data loading
+make dry-run               # Run target in dry-run mode
 
-# Singer protocol commands
-make singer-about          # Show target information
-make singer-config-sample  # Generate configuration sample
+# Direct target commands
+poetry run target-ldif --about        # Show target information
+poetry run target-ldif --version      # Show version
+poetry run target-ldif --config config.json  # Run with configuration
 ```
 
 ### LDIF-Specific Operations
@@ -89,41 +87,33 @@ make singer-config-sample  # Generate configuration sample
 ```bash
 # LDIF file operations
 make ldif-write            # Test LDIF writing functionality
-make ldif-validate-output  # Validate LDIF output format
-make ldif-format-check     # Check LDIF format compliance
-make ldif-export-users     # Export user data to LDIF
-make ldif-export-groups    # Export group data to LDIF
-
-# LDIF processing
-make ldif-merge            # Merge multiple LDIF files
-make ldif-split            # Split LDIF file by entry type
-make ldif-clean            # Clean and normalize LDIF output
+make ldif-validate         # Validate LDIF format
+make ldif-export           # Export data to LDIF format
 ```
 
 ### Development Setup
 
 ```bash
 # Complete development setup
-make setup                 # install + pre-commit hooks
+make setup                 # install-dev + pre-commit hooks
 
 # Installation
-make install               # Install all dependencies
-make dev-install           # Development mode with pre-commit
-make pre-commit            # Setup pre-commit hooks
+make install               # Install basic dependencies
+make install-dev           # Install with dev, test, docs dependencies
 
 # Code formatting
 make format                # Format code with ruff
 make fix                   # Auto-fix formatting and lint issues
+make pre-commit            # Run pre-commit hooks manually
 ```
 
 ### Dependency Management
 
 ```bash
 # Dependency operations
-make deps-update           # Update all dependencies
-make deps-audit            # Security audit of dependencies
-make deps-tree             # Show dependency tree
-make deps-outdated         # Show outdated dependencies
+make deps-update           # Update all dependencies (poetry update)
+make deps-audit            # Security audit of dependencies (pip-audit)
+make deps-show             # Show dependency tree (poetry show --tree)
 ```
 
 ## Configuration
@@ -192,18 +182,20 @@ echo '{"uid":"test","cn":"Test User"}' | target-ldif --config config.json
 
 ```
 src/flext_target_ldif/
-├── __init__.py           # Package initialization
-├── target.py             # Main Singer target implementation
-├── sinks.py              # Singer sink for batch processing
-├── writer.py             # LDIF file writer using flext-ldif
+├── __init__.py           # Package initialization and exports
+├── __version__.py        # Version information
+├── target.py             # Main TargetLDIF Singer implementation
+├── sinks.py              # LDIFSink for batch processing records
+├── writer.py             # LdifWriter using flext-ldif infrastructure
 ├── config.py             # Configuration classes with validation
 ├── exceptions.py         # Custom exception classes
 ├── validation.py         # Input validation logic
 ├── transformers.py       # Data transformation utilities
+├── models.py             # Data models and types
 ├── cli.py                # Command-line interface
-└── infrastructure/       # Infrastructure layer
-    ├── __init__.py
-    └── di_container.py   # Dependency injection setup
+├── di_container.py       # Dependency injection container
+├── typings.py            # Type definitions
+└── target_*.py           # Additional target modules
 
 tests/
 ├── conftest.py           # Pytest configuration and fixtures
@@ -214,11 +206,18 @@ tests/
 
 ## Development Workflow
 
-1. **Setup**: Run `make setup` for complete development environment
-2. **Development**: Use `make check` frequently during development
-3. **Testing**: Run `make test` to ensure coverage requirements
-4. **Quality**: Run `make validate` before committing (required to pass)
-5. **Integration**: Test Singer protocol with `make target-test`
+1. **Setup**: Run `make setup` for complete development environment (install-dev + pre-commit)
+2. **Development**: Use `make check` frequently during development (lint + type-check)
+3. **Testing**: Run `make test` to ensure 90% coverage requirements
+4. **Quality**: Run `make validate` before committing (lint + type-check + security + test - ALL must pass)
+5. **Integration**: Test Singer protocol with `make test-target` and `make load`
+
+### Key Architectural Patterns
+
+- **FLEXT Integration**: Uses flext-meltano for Singer SDK abstractions, flext-ldif for LDIF processing, and flext-core for error handling patterns
+- **Configuration Schema**: Leverages `create_file_tap_schema()` from flext-meltano with LDIF-specific extensions rather than custom schema
+- **Error Handling**: Uses FlextResult railway-oriented programming pattern throughout for consistent error propagation
+- **Dependency Management**: All FLEXT dependencies are local path dependencies with `develop = true` for live development
 
 ## TODO: GAPS DE ARQUITETURA IDENTIFICADOS - PRIORIDADE ALTA
 
@@ -306,15 +305,23 @@ TARGET_LDIF_SORT_ENTRIES=true
 
 **Test Failures**: Use `pytest --lf` to run only failed tests for quick feedback
 
-### Debugging
+### Additional Commands
 
 ```bash
-# Debug target execution
-make target-run-debug
+# Build and maintenance
+make build                 # Build package with poetry
+make build-clean           # Clean and build
+make docs                  # Build documentation
+make docs-serve            # Serve documentation locally
+make shell                 # Open Python shell with project loaded
+make diagnose              # Project diagnostics
+make doctor                # Health check + diagnostics
+make clean                 # Clean build artifacts and cache
+make clean-all             # Deep clean including venv
+make reset                 # Clean all + setup
 
-# Run tests with verbose output
-pytest -v -s
-
-# Check specific test markers
-pytest -m ldif -v
+# Debugging
+pytest -v -s               # Verbose test output
+pytest tests/test_target.py::test_specific -vvs  # Debug specific test
+poetry run python -c "from flext_target_ldif import TargetLDIF; print(TargetLDIF.cli)"
 ```

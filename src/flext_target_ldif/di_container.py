@@ -24,13 +24,13 @@ class _ContainerManager:
     """Container manager to avoid global statement issues."""
 
     def __init__(self) -> None:
-        self.container: FlextContainer | None = None
+      self.container: FlextContainer | None = None
 
     def get_container(self) -> FlextContainer:
-        """Get or create container instance."""
-        if self.container is None:
-            self.container = FlextContainer()
-        return self.container
+      """Get or create container instance."""
+      if self.container is None:
+          self.container = FlextContainer()
+      return self.container
 
 
 # Module-level container manager
@@ -41,7 +41,7 @@ def get_flext_target_ldif_container() -> FlextContainer:
     """Get FLEXT_TARGET_LDIF-specific DI container instance.
 
     Returns:
-        FlextContainer: Official container from flext-core.
+      FlextContainer: Official container from flext-core.
 
     """
     return _container_manager.get_container()
@@ -52,27 +52,27 @@ def configure_flext_target_ldif_dependencies() -> None:
     get_flext_target_ldif_container()
 
     with contextlib.suppress(ImportError):
-        # Register module-specific dependencies
-        # Future enhancement: Add module-specific service registrations here
-        # Dependencies configured successfully
-        pass
+      # Register module-specific dependencies
+      # Future enhancement: Add module-specific service registrations here
+      # Dependencies configured successfully
+      pass
 
 
 def get_flext_target_ldif_service(service_name: str) -> object:
     """Get flext_target_ldif service from container.
 
     Args:
-        service_name: Name of service to retrieve.
+      service_name: Name of service to retrieve.
 
     Returns:
-        Service instance or None if not found.
+      Service instance or None if not found.
 
     """
     container = get_flext_target_ldif_container()
     result = container.get(service_name)
 
     if result.success:
-        return result.data
+      return result.data
 
     # Service not found - silent fail for now
     return None

@@ -12,37 +12,37 @@ import pytest
 def temp_dir() -> Generator[Path]:
     """Provide a temporary directory for tests."""
     with tempfile.TemporaryDirectory() as temp_dir:
-        yield Path(temp_dir)
+      yield Path(temp_dir)
 
 
 @pytest.fixture
 def temp_file() -> Generator[Path]:
     """Provide a temporary file for tests."""
     with tempfile.NamedTemporaryFile(delete=False) as temp_file:
-        temp_path = Path(temp_file.name)
-        yield temp_path
-        # Cleanup
-        if temp_path.exists():
-            temp_path.unlink()
+      temp_path = Path(temp_file.name)
+      yield temp_path
+      # Cleanup
+      if temp_path.exists():
+          temp_path.unlink()
 
 
 @pytest.fixture
 def sample_config(temp_dir: Path) -> dict[str, object]:
     """Provide a sample configuration for testing."""
     return {
-        "output_path": str(temp_dir),
-        "file_naming_pattern": "{stream_name}_{timestamp}.ldif",
-        "dn_template": "uid={uid},ou=users,dc=example,dc=com",
-        "ldif_options": {
-            "line_length": 78,
-            "base64_encode": False,
-            "include_timestamps": True,
-        },
-        "attribute_mapping": {
-            "user_id": "uid",
-            "full_name": "cn",
-            "email": "mail",
-        },
+      "output_path": str(temp_dir),
+      "file_naming_pattern": "{stream_name}_{timestamp}.ldif",
+      "dn_template": "uid={uid},ou=users,dc=example,dc=com",
+      "ldif_options": {
+          "line_length": 78,
+          "base64_encode": False,
+          "include_timestamps": True,
+      },
+      "attribute_mapping": {
+          "user_id": "uid",
+          "full_name": "cn",
+          "email": "mail",
+      },
     }
 
 
@@ -50,14 +50,14 @@ def sample_config(temp_dir: Path) -> dict[str, object]:
 def sample_record() -> dict[str, str]:
     """Provide a sample record for testing."""
     return {
-        "uid": "testuser",
-        "cn": "Test User",
-        "givenName": "Test",
-        "sn": "User",
-        "mail": "test@example.com",
-        "telephoneNumber": "+1-555-123-4567",
-        "title": "Software Engineer",
-        "departmentNumber": "Engineering",
+      "uid": "testuser",
+      "cn": "Test User",
+      "givenName": "Test",
+      "sn": "User",
+      "mail": "test@example.com",
+      "telephoneNumber": "+1-555-123-4567",
+      "title": "Software Engineer",
+      "departmentNumber": "Engineering",
     }
 
 
@@ -65,18 +65,18 @@ def sample_record() -> dict[str, str]:
 def sample_schema() -> dict[str, object]:
     """Provide a sample Singer schema for testing."""
     return {
-        "type": "object",
-        "properties": {
-            "uid": {"type": "string"},
-            "cn": {"type": "string"},
-            "givenName": {"type": "string"},
-            "sn": {"type": "string"},
-            "mail": {"type": "string"},
-            "telephoneNumber": {"type": "string"},
-            "title": {"type": "string"},
-            "departmentNumber": {"type": "string"},
-        },
-        "required": ["uid", "cn", "sn"],
+      "type": "object",
+      "properties": {
+          "uid": {"type": "string"},
+          "cn": {"type": "string"},
+          "givenName": {"type": "string"},
+          "sn": {"type": "string"},
+          "mail": {"type": "string"},
+          "telephoneNumber": {"type": "string"},
+          "title": {"type": "string"},
+          "departmentNumber": {"type": "string"},
+      },
+      "required": ["uid", "cn", "sn"],
     }
 
 
@@ -84,27 +84,27 @@ def sample_schema() -> dict[str, object]:
 def multiple_records() -> list[dict[str, str]]:
     """Provide multiple sample records for testing."""
     return [
-        {
-            "uid": "user1",
-            "cn": "User One",
-            "givenName": "User",
-            "sn": "One",
-            "mail": "user1@example.com",
-        },
-        {
-            "uid": "user2",
-            "cn": "User Two",
-            "givenName": "User",
-            "sn": "Two",
-            "mail": "user2@example.com",
-        },
-        {
-            "uid": "user3",
-            "cn": "User Three",
-            "givenName": "User",
-            "sn": "Three",
-            "mail": "user3@example.com",
-        },
+      {
+          "uid": "user1",
+          "cn": "User One",
+          "givenName": "User",
+          "sn": "One",
+          "mail": "user1@example.com",
+      },
+      {
+          "uid": "user2",
+          "cn": "User Two",
+          "givenName": "User",
+          "sn": "Two",
+          "mail": "user2@example.com",
+      },
+      {
+          "uid": "user3",
+          "cn": "User Three",
+          "givenName": "User",
+          "sn": "Three",
+          "mail": "user3@example.com",
+      },
     ]
 
 
@@ -112,9 +112,9 @@ def multiple_records() -> list[dict[str, str]]:
 def ldif_options() -> dict[str, object]:
     """Provide sample LDIF options for testing."""
     return {
-        "line_length": 78,
-        "base64_encode": False,
-        "include_timestamps": True,
+      "line_length": 78,
+      "base64_encode": False,
+      "include_timestamps": True,
     }
 
 
@@ -122,15 +122,15 @@ def ldif_options() -> dict[str, object]:
 def attribute_mapping() -> dict[str, str]:
     """Provide sample attribute mapping for testing."""
     return {
-        "user_id": "uid",
-        "username": "uid",
-        "full_name": "cn",
-        "first_name": "givenName",
-        "last_name": "sn",
-        "email": "mail",
-        "phone": "telephoneNumber",
-        "job_title": "title",
-        "department": "departmentNumber",
+      "user_id": "uid",
+      "username": "uid",
+      "full_name": "cn",
+      "first_name": "givenName",
+      "last_name": "sn",
+      "email": "mail",
+      "phone": "telephoneNumber",
+      "job_title": "title",
+      "department": "departmentNumber",
     }
 
 
@@ -146,6 +146,6 @@ def pytest_configure(config: Any) -> None:
     config.addinivalue_line("markers", "target: mark test as target-specific")
     config.addinivalue_line("markers", "sink: mark test as sink-specific")
     config.addinivalue_line(
-        "markers",
-        "requires_filesystem: mark test as requiring file system access",
+      "markers",
+      "requires_filesystem: mark test as requiring file system access",
     )
