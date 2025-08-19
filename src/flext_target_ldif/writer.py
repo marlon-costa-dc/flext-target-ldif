@@ -53,9 +53,9 @@ class LdifWriter:
         try:
             # Create output directory if needed
             self.output_file.parent.mkdir(parents=True, exist_ok=True)
-            return FlextResult.ok(None)
+            return FlextResult[None].ok(None)
         except (RuntimeError, ValueError, TypeError) as e:
-            return FlextResult.fail(f"Failed to prepare LDIF file: {e}")
+            return FlextResult[None].fail(f"Failed to prepare LDIF file: {e}")
 
     def close(self) -> FlextResult[None]:
         """Close the output file and write all collected records."""
@@ -93,13 +93,13 @@ class LdifWriter:
                 # Use real flext-ldif API to write entries
                 write_result = self._ldif_api.write(ldif_entries)
                 if not write_result.success:
-                    return FlextResult.fail(f"LDIF write failed: {write_result.error}")
+                    return FlextResult[None].fail(f"LDIF write failed: {write_result.error}")
                 ldif_content = write_result.data or ""
                 # Write to file
                 self.output_file.write_text(ldif_content, encoding="utf-8")
-            return FlextResult.ok(None)
+            return FlextResult[None].ok(None)
         except (RuntimeError, ValueError, TypeError) as e:
-            return FlextResult.fail(f"Failed to close LDIF file: {e}")
+            return FlextResult[None].fail(f"Failed to close LDIF file: {e}")
 
     def write_record(self, record: dict[str, object]) -> FlextResult[None]:
         """Write a record to the LDIF file buffer."""
@@ -107,9 +107,9 @@ class LdifWriter:
             # Buffer the record for batch writing
             self._records.append(record.copy())
             self._record_count += 1
-            return FlextResult.ok(None)
+            return FlextResult[None].ok(None)
         except (RuntimeError, ValueError, TypeError) as e:
-            return FlextResult.fail(f"Failed to buffer record: {e}")
+            return FlextResult[None].fail(f"Failed to buffer record: {e}")
 
     def _generate_dn(self, record: dict[str, object]) -> str:
         """Generate DN from record using template."""

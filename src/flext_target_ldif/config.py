@@ -85,11 +85,11 @@ class FlextTargetLdifConfig(FlextBaseConfigModel):
                 try:
                     output_path.mkdir(parents=True, exist_ok=True)
                 except (OSError, PermissionError) as e:
-                    return FlextResult.fail(f"Cannot access output path: {e}")
+                    return FlextResult[None].fail(f"Cannot access output path: {e}")
 
             # Use flext-ldap for DN validation - NO local duplication
             if not self.dn_template:
-                return FlextResult.fail("DN template cannot be empty")
+                return FlextResult[None].fail("DN template cannot be empty")
 
             # For template validation, create a sample DN with dummy values
             sample_dn = self.dn_template.replace("{uid}", "testuser").replace(
@@ -97,13 +97,13 @@ class FlextTargetLdifConfig(FlextBaseConfigModel):
                 "Test User",
             )
             if not flext_ldap_validate_dn(sample_dn):
-                return FlextResult.fail(
+                return FlextResult[None].fail(
                     "DN template format is invalid - must follow LDAP DN structure",
                 )
 
-            return FlextResult.ok(None)
+            return FlextResult[None].ok(None)
         except Exception as e:
-            return FlextResult.fail(f"Configuration validation failed: {e}")
+            return FlextResult[None].fail(f"Configuration validation failed: {e}")
 
 
 __all__: list[str] = [
