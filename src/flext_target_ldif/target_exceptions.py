@@ -8,7 +8,7 @@ Consolidates all LDIF target exception classes:
 
 Follows established FLEXT patterns:
 - Uses flext-core FlextError base classes
-- Structured error context with FlextValueObject
+- Structured error context with FlextValue
 - Type-safe exception handling
 - Comprehensive error categorization
 

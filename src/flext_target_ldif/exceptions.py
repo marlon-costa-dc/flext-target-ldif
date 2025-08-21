@@ -8,7 +8,7 @@ Domain-specific exceptions using factory pattern to eliminate 200+ lines of dupl
 
 from __future__ import annotations
 
-from flext_core import FlextResult, FlextValueObject
+from flext_core import FlextResult, FlextValue
 from flext_core.exceptions import (
     FlextError,
     FlextProcessingError,
@@ -141,7 +141,7 @@ class FlextTargetLdifSchemaError(FlextValidationError):
         )
 
 
-class FlextTargetLdifErrorDetails(FlextValueObject):
+class FlextTargetLdifErrorDetails(FlextValue):
     """Structured error details using flext-core patterns."""
 
     error_code: str

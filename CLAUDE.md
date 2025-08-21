@@ -19,7 +19,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - **Python 3.13**: Latest Python with strict type checking
 - **Singer SDK**: Data integration protocol via flext-meltano
-- **FLEXT Core**: Foundation patterns (FlextResult, FlextValueObject, dependency injection)
+- **FLEXT Core**: Foundation patterns (FlextResult, FlextValue, dependency injection)
 - **FLEXT LDIF**: Specialized LDIF processing infrastructure
 - **Pydantic**: Configuration validation and data modeling
 
@@ -174,7 +174,7 @@ echo '{"uid":"test","cn":"Test User"}' | target-ldif --config config.json
 ### Architecture Patterns
 
 - **FlextResult**: Railway-oriented programming for error handling
-- **FlextValueObject**: Domain modeling with validation
+- **FlextValue**: Domain modeling with validation
 - **Dependency Injection**: Using flext-core DI container
 - **Clean Architecture**: Clear separation of concerns
 
