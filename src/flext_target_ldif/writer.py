@@ -93,7 +93,9 @@ class LdifWriter:
                 # Use real flext-ldif API to write entries
                 write_result = self._ldif_api.write(ldif_entries)
                 if not write_result.success:
-                    return FlextResult[None].fail(f"LDIF write failed: {write_result.error}")
+                    return FlextResult[None].fail(
+                        f"LDIF write failed: {write_result.error}"
+                    )
                 ldif_content = write_result.data or ""
                 # Write to file
                 self.output_file.write_text(ldif_content, encoding="utf-8")
