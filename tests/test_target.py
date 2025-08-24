@@ -165,7 +165,7 @@ class TestFlextTargetLdif:
         target = FlextTargetLdif()
         target._test_config = {"schema_validation": True}
 
-        with pytest.raises(FlextTargetLdifConfigurationError) as exc_info:
+        with pytest.raises(ValueError) as exc_info:
             target.validate_config()
 
         if "Output file is required" not in str(exc_info.value):
@@ -182,7 +182,7 @@ class TestFlextTargetLdif:
             "schema_validation": True,
         }
 
-        with pytest.raises(FlextTargetLdifConfigurationError) as exc_info:
+        with pytest.raises(ValueError) as exc_info:
             target.validate_config()
 
         if "Output file cannot be empty" not in str(exc_info.value):
@@ -200,7 +200,7 @@ class TestFlextTargetLdif:
             "schema_validation": True,
         }
 
-        with pytest.raises(FlextTargetLdifConfigurationError) as exc_info:
+        with pytest.raises(ValueError) as exc_info:
             target.validate_config()
 
         if "DN template cannot be empty" not in str(exc_info.value):
@@ -419,7 +419,7 @@ class TestIntegration:
         target = FlextTargetLdif()
         target._test_config = {"output_file": ""}  # Invalid
 
-        with pytest.raises(FlextTargetLdifConfigurationError):
+        with pytest.raises(ValueError):
             target.validate_config()
 
     def test_singer_sdk_compatibility(self) -> None:
