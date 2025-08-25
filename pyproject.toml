@@ -58,7 +58,7 @@ target-ldif = "flext_target_ldif.target:TargetLDIF.cli"
 flext-target-ldif = "flext_target_ldif.target:TargetLDIF.cli"
 
 [tool.ruff]
-extend = "../.config/tools/.ruff-shared.toml"
+extend = "../ruff-shared.toml"
 lint.isort.known-first-party = ["flext_target_ldif"]
 
 [tool.mypy]
