@@ -7,7 +7,7 @@ Consolidates all LDIF target exception classes:
 - Railway-oriented programming support
 
 Follows established FLEXT patterns:
-- Uses flext-core FlextError base classes
+- Uses flext-core FlextExceptions.Error base classes
 - Structured error context with FlextValue
 - Type-safe exception handling
 - Comprehensive error categorization

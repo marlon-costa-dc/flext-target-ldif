@@ -9,16 +9,16 @@ Domain-specific exceptions using factory pattern to eliminate 200+ lines of dupl
 from __future__ import annotations
 
 from flext_core import (
-    FlextError,
+    FlextExceptions.Error,
     FlextProcessingError,
     FlextResult,
-    FlextValidationError,
+    FlextExceptions.ValidationError,
     FlextValue,
 )
 
 
 # Base exception class for flext-target-ldif
-class FlextTargetLdifError(FlextError):
+class FlextTargetLdifError(FlextExceptions.Error):
     """Base exception for FLEXT Target LDIF errors."""
 
     def __init__(
@@ -116,7 +116,7 @@ class FlextTargetLdifFileError(FlextTargetLdifError):
         super().__init__(f"LDIF target file: {message}", **context)
 
 
-class FlextTargetLdifSchemaError(FlextValidationError):
+class FlextTargetLdifSchemaError(FlextExceptions.ValidationError):
     """Schema validation errors."""
 
     def __init__(

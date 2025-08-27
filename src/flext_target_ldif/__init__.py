@@ -5,7 +5,7 @@ from __future__ import annotations
 import importlib.metadata
 
 # flext-core imports
-from flext_core import FlextError, FlextResult, FlextValue, get_logger
+from flext_core import FlextExceptions, FlextResult, FlextValue, get_logger
 
 # === FLEXT-MELTANO COMPLETE INTEGRATION ===
 # Re-export ALL flext-meltano facilities for full ecosystem integration
@@ -141,7 +141,7 @@ __all__: list[str] = [
     "get_tap_test_class",
     "singer_typing",
     # === FLEXT-CORE RE-EXPORTS ===
-    "FlextError",
+    "FlextExceptions.Error",
     "FlextResult",
     "FlextValue",
     "get_logger",
