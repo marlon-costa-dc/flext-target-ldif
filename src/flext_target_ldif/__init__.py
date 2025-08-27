@@ -141,7 +141,7 @@ __all__: list[str] = [
     "get_tap_test_class",
     "singer_typing",
     # === FLEXT-CORE RE-EXPORTS ===
-    "FlextExceptions.Error",
+    "FlextExceptions",
     "FlextResult",
     "FlextValue",
     "get_logger",
