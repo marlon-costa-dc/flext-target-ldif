@@ -3,7 +3,8 @@
 import tempfile
 from collections.abc import Generator
 from pathlib import Path
-from typing import Any
+
+object
 
 import pytest
 
@@ -135,7 +136,7 @@ def attribute_mapping() -> dict[str, str]:
 
 
 # Pytest markers for test categorization
-def pytest_configure(config: Any) -> None:
+def pytest_configure(config: object) -> None:
     """Configure pytest markers."""
     config.addinivalue_line("markers", "unit: mark test as a unit test")
     config.addinivalue_line("markers", "integration: mark test as an integration test")
