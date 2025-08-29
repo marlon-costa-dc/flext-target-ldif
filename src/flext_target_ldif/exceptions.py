@@ -12,7 +12,7 @@ from flext_core import (
     FlextExceptions,
     FlextProcessingError,
     FlextResult,
-    FlextValue,
+    FlextModels.Value,
 )
 
 
@@ -141,7 +141,7 @@ class FlextTargetLdifSchemaError(FlextExceptions):
         )
 
 
-class FlextTargetLdifErrorDetails(FlextValue):
+class FlextTargetLdifErrorDetails(FlextModels.Value):
     """Structured error details using flext-core patterns."""
 
     error_code: str

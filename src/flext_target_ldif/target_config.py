@@ -1,7 +1,7 @@
 """Target configuration module for FLEXT Target LDIF.
 
 Provides comprehensive configuration management following flext-core patterns:
-- FlextValue base class for type safety
+- FlextModels.Value base class for type safety
 - Business rule validation with FlextResult
 - Integration with flext-ldap for DN validation
 - Eliminates code duplication through composition

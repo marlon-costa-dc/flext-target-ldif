@@ -13,7 +13,7 @@ import types
 from pathlib import Path
 from typing import Self
 
-from flext_core import FlextResult, get_logger
+from flext_core import FlextLogger, FlextResult
 from flext_ldif import (
     FlextLdifAPI,
     FlextLdifAttributes,
@@ -23,7 +23,7 @@ from flext_ldif import (
 
 from flext_target_ldif.exceptions import FlextTargetLdifWriterError
 
-logger = get_logger(__name__)
+logger = FlextLogger(__name__)
 
 
 class LdifWriter:

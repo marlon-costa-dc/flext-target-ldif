@@ -5,7 +5,7 @@ from __future__ import annotations
 import importlib.metadata
 
 # flext-core imports
-from flext_core import FlextExceptions, FlextResult, FlextValue, get_logger
+from flext_core import FlextExceptions, FlextResult, FlextModels.Value, FlextLogger
 
 # === FLEXT-MELTANO COMPLETE INTEGRATION ===
 # Re-export ALL flext-meltano facilities for full ecosystem integration
@@ -143,8 +143,8 @@ __all__: list[str] = [
     # === FLEXT-CORE RE-EXPORTS ===
     "FlextExceptions",
     "FlextResult",
-    "FlextValue",
-    "get_logger",
+    "FlextModels.Value",
+    "FlextLogger",
     # === PEP8 CONSOLIDATED MODULES (Primary Interface) ===
     # Configuration
     "FlextTargetLdifConfig",
