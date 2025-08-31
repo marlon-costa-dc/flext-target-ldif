@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from flext_core import (
     FlextExceptions,
-    FlextProcessingError,
+    FlextExceptions.ProcessingError,
     FlextResult,
     FlextModels.Value,
 )
@@ -33,7 +33,7 @@ class FlextTargetLdifError(FlextExceptions):
         )
 
 
-class FlextTargetLdifTransformationError(FlextProcessingError):
+class FlextTargetLdifTransformationError(FlextExceptions.ProcessingError):
     """Data transformation errors."""
 
     def __init__(

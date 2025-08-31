@@ -5,7 +5,7 @@ from __future__ import annotations
 import importlib.metadata
 
 # flext-core imports
-from flext_core import FlextExceptions, FlextResult, FlextModels.Value, FlextLogger
+from flext_core import FlextExceptions, FlextResult, FlextModels, FlextLogger
 
 # === FLEXT-MELTANO COMPLETE INTEGRATION ===
 # Re-export ALL flext-meltano facilities for full ecosystem integration
