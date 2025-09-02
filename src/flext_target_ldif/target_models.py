@@ -7,7 +7,7 @@ Consolidates LDIF-specific data models and transformations:
 - Integration with flext-ldap utilities
 
 Follows established FLEXT patterns:
-- Uses flext-core FlextModels.Value for data models
+- Uses flext-core FlextModels for data models
 - Leverages flext-ldap infrastructure to eliminate duplication
 - Type-safe transformations with comprehensive validation
 - Railway-oriented programming with FlextResult

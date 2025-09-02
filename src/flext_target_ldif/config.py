@@ -8,14 +8,14 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from flext_core import FlextConfig, FlextResult
+from flext_core import FlextModels, FlextResult
 
 # Use flext-ldap for DN validation - no duplication
 from flext_ldap.utils import flext_ldap_validate_dn
 from pydantic import Field, field_validator
 
 
-class FlextTargetLdifConfig(FlextConfig.BaseModel):
+class FlextTargetLdifConfig(FlextModels.BaseConfig):
     """Configuration for FLEXT Target LDIF using FlextConfig.BaseModel patterns."""
 
     output_path: str = Field(
@@ -77,7 +77,7 @@ class FlextTargetLdifConfig(FlextConfig.BaseModel):
         return v
 
     def validate_business_rules(self) -> FlextResult[None]:
-        """Validate LDIF target configuration business rules using FlextConfig.BaseModel pattern."""
+        """Validate LDIF target configuration business rules using FlextModels.BaseConfig pattern."""
         try:
             # Validate output path is accessible
             output_path = Path(self.output_path)

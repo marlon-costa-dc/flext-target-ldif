@@ -15,10 +15,10 @@ from typing import Self
 
 from flext_core import FlextLogger, FlextResult
 from flext_ldif import (
-    FlextLdifAPI,
-    FlextLdifAttributes,
-    FlextLdifDistinguishedName,
-    FlextLdifEntry,
+    FlextLDIFAPI,
+    FlextLDIFAttributes,
+    FlextLDIFDistinguishedName,
+    FlextLDIFEntry,
 )
 
 from flext_target_ldif.exceptions import FlextTargetLdifWriterError
@@ -44,7 +44,7 @@ class LdifWriter:
         self.attribute_mapping = attribute_mapping or {}
         self.schema = schema or {}
         # Use flext-ldif API for writing
-        self._ldif_api = FlextLdifAPI()
+        self._ldif_api = FlextLDIFAPI()
         self._records: list[dict[str, object]] = []
         self._record_count = 0
 
@@ -61,7 +61,7 @@ class LdifWriter:
         """Close the output file and write all collected records."""
         try:
             if self._records:
-                # Convert records to FlextLdifEntry objects for flext-ldif API
+                # Convert records to FlextLDIFEntry objects for flext-ldif API
                 ldif_entries = []
                 for record in self._records:
                     try:
@@ -72,8 +72,8 @@ class LdifWriter:
                             if key != "dn":  # Skip DN as it's already set
                                 mapped_key = self.attribute_mapping.get(key, key)
                                 attributes[mapped_key] = value
-                        # Create FlextLdifEntry using the real API
-                        # Convert dict to list format expected by FlextLdifAttributes
+                        # Create FlextLDIFEntry using the real API
+                        # Convert dict to list format expected by FlextLDIFAttributes
                         attr_dict = {}
                         for key, value in attributes.items():
                             attr_dict[key] = (
@@ -81,10 +81,10 @@ class LdifWriter:
                                 if not isinstance(value, list)
                                 else [str(v) for v in value]
                             )
-                        entry = FlextLdifEntry(
+                        entry = FlextLDIFEntry(
                             id=dn,  # Use DN as unique identifier
-                            dn=FlextLdifDistinguishedName(value=dn),
-                            attributes=FlextLdifAttributes(attributes=attr_dict),
+                            dn=FlextLDIFDistinguishedName(value=dn),
+                            attributes=FlextLDIFAttributes(attributes=attr_dict),
                         )
                         ldif_entries.append(entry)
                     except (RuntimeError, ValueError, TypeError) as e:

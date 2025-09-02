@@ -143,7 +143,7 @@ __all__: list[str] = [
     # === FLEXT-CORE RE-EXPORTS ===
     "FlextExceptions",
     "FlextResult",
-    "FlextModels.Value",
+    "FlextModels",
     "FlextLogger",
     # === PEP8 CONSOLIDATED MODULES (Primary Interface) ===
     # Configuration

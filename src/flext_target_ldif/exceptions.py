@@ -10,9 +10,8 @@ from __future__ import annotations
 
 from flext_core import (
     FlextExceptions,
-    FlextExceptions.ProcessingError,
+    FlextModels,
     FlextResult,
-    FlextModels.Value,
 )
 
 
@@ -141,7 +140,7 @@ class FlextTargetLdifSchemaError(FlextExceptions):
         )
 
 
-class FlextTargetLdifErrorDetails(FlextModels.Value):
+class FlextTargetLdifErrorDetails(FlextModels):
     """Structured error details using flext-core patterns."""
 
     error_code: str
