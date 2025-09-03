@@ -15,7 +15,7 @@ from flext_ldap.utils import flext_ldap_validate_dn
 from pydantic import Field, field_validator
 
 
-class FlextTargetLdifConfig(FlextModels.BaseConfig):
+class FlextTargetLdifConfig(FlextModels.Config):
     """Configuration for FLEXT Target LDIF using FlextConfig.BaseModel patterns."""
 
     output_path: str = Field(
@@ -77,7 +77,7 @@ class FlextTargetLdifConfig(FlextModels.BaseConfig):
         return v
 
     def validate_business_rules(self) -> FlextResult[None]:
-        """Validate LDIF target configuration business rules using FlextModels.BaseConfig pattern."""
+        """Validate LDIF target configuration business rules using FlextModels.Config pattern."""
         try:
             # Validate output path is accessible
             output_path = Path(self.output_path)
