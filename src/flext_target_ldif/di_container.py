@@ -12,8 +12,6 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-import contextlib
-
 # 🚨 ARCHITECTURAL COMPLIANCE: Use ONLY official flext-core FlextContainer
 from flext_core import FlextContainer
 
@@ -50,12 +48,6 @@ def get_flext_target_ldif_container() -> FlextContainer:
 def configure_flext_target_ldif_dependencies() -> None:
     """Configure FLEXT_TARGET_LDIF dependencies using official FlextContainer."""
     get_flext_target_ldif_container()
-
-    with contextlib.suppress(ImportError):
-        # Register module-specific dependencies
-        # Future enhancement: Add module-specific service registrations here
-        # Dependencies configured successfully
-        pass
 
 
 def get_flext_target_ldif_service(service_name: str) -> object:
