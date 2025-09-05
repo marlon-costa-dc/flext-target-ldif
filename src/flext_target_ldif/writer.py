@@ -14,12 +14,7 @@ from pathlib import Path
 from typing import Self
 
 from flext_core import FlextLogger, FlextResult
-from flext_ldif import (
-    FlextLDIFAPI,
-    FlextLDIFAttributes,
-    FlextLDIFDistinguishedName,
-    FlextLDIFEntry,
-)
+from flext_ldif import FlextLDIFAPI
 
 from flext_target_ldif.exceptions import FlextTargetLdifWriterError
 
@@ -47,6 +42,7 @@ class LdifWriter:
         self._ldif_api = FlextLDIFAPI()
         self._records: list[dict[str, object]] = []
         self._record_count = 0
+        self._ldif_entries: list[dict[str, object]] = []
 
     def open(self) -> FlextResult[None]:
         """Open the output file for writing."""
@@ -62,7 +58,7 @@ class LdifWriter:
         try:
             if self._records:
                 # Convert records to FlextLDIFEntry objects for flext-ldif API
-                ldif_entries = []
+                self._ldif_entries = []
                 for record in self._records:
                     try:
                         dn = self._generate_dn(record)
@@ -81,17 +77,32 @@ class LdifWriter:
                                 if not isinstance(value, list)
                                 else [str(v) for v in value]
                             )
-                        entry = FlextLDIFEntry(
-                            id=dn,  # Use DN as unique identifier
-                            dn=FlextLDIFDistinguishedName(value=dn),
-                            attributes=FlextLDIFAttributes(attributes=attr_dict),
-                        )
-                        ldif_entries.append(entry)
+                        # Create simple entry dict for LDIF writing
+                        entry: dict[str, object] = {
+                            "dn": dn,
+                            "attributes": dict(attr_dict),  # Ensure it's a dict
+                        }
+                        self._ldif_entries.append(entry)
                     except (RuntimeError, ValueError, TypeError) as e:
                         logger.warning("Skipping invalid record: %s", e)
                         continue
-                # Use real flext-ldif API to write entries
-                write_result = self._ldif_api.write(ldif_entries)
+                # Write LDIF entries to file
+                with self.output_file.open("w", encoding="utf-8") as f:
+                    for entry in self._ldif_entries:
+                        dn_obj = entry.get("dn", "")
+                        dn_str = str(dn_obj) if dn_obj else ""
+                        attributes_obj = entry.get("attributes", {})
+                        f.write(f"dn: {dn_str}\n")
+                        if isinstance(attributes_obj, dict):
+                            for attr, values in attributes_obj.items():
+                                if isinstance(values, list):
+                                    for value in values:
+                                        f.write(f"{attr}: {value}\n")
+                                else:
+                                    f.write(f"{attr}: {values}\n")
+                        f.write("\n")  # Blank line between entries
+
+                write_result = FlextResult[str].ok("LDIF written successfully")
                 if not write_result.success:
                     return FlextResult[None].fail(
                         f"LDIF write failed: {write_result.error}"

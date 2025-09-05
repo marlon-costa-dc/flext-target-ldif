@@ -7,35 +7,23 @@ import importlib.metadata
 # flext-core imports
 from flext_core import FlextExceptions, FlextResult, FlextModels, FlextLogger
 
-# === FLEXT-MELTANO COMPLETE INTEGRATION ===
-# Re-export ALL flext-meltano facilities for full ecosystem integration
+# === FLEXT-MELTANO INTEGRATION ===
+# Re-export available flext-meltano facilities
 from flext_meltano import (
-    BatchSink,
-    FlextMeltanoBaseService,
     # Bridge integration
     FlextMeltanoBridge,
     # Configuration and validation
     FlextMeltanoConfig,
-    FlextMeltanoEvent,
-    # RESTStream,  # Not in flext_meltano yet
-    # Enterprise services from flext-meltano.base
+    # Enterprise services
     FlextMeltanoTargetService,
-    # Authentication patterns
-    OAuthAuthenticator,
-    # Typing definitions
-    PropertiesList,
-    Property,
-    Sink,
-    SQLSink,
-    # Core Singer SDK classes (centralized from flext-meltano)
-    Stream,
-    Tap,
-    Target,
-    create_meltano_target_service,
-    # Testing utilities
-    get_tap_test_class,  # Using tap test class for targets too
-    # Singer typing utilities (centralized)
-    singer_typing,
+    # Types and protocols
+    FlextSingerTypes,
+    FlextTargetAbstractions,
+    FlextTargetPlugin,
+    # Stream and configuration
+    StreamDefinition,
+    # Service protocols
+    TargetServiceProtocol,
 )
 
 # === PEP8 CONSOLIDATED MODULE IMPORTS ===
@@ -123,23 +111,14 @@ __version_info__ = tuple(int(x) for x in __version__.split(".") if x.isdigit())
 # Complete public API exports with PEP8 consolidation and backward compatibility
 __all__: list[str] = [
     # === FLEXT-MELTANO RE-EXPORTS ===
-    "BatchSink",
-    "FlextMeltanoBaseService",
     "FlextMeltanoBridge",
     "FlextMeltanoConfig",
-    "FlextMeltanoEvent",
     "FlextMeltanoTargetService",
-    "OAuthAuthenticator",
-    "PropertiesList",
-    "Property",
-    "SQLSink",
-    "Sink",
-    "Stream",
-    "Tap",
-    "Target",
-    "create_meltano_target_service",
-    "get_tap_test_class",
-    "singer_typing",
+    "FlextSingerTypes",
+    "FlextTargetAbstractions",
+    "FlextTargetPlugin",
+    "StreamDefinition",
+    "TargetServiceProtocol",
     # === FLEXT-CORE RE-EXPORTS ===
     "FlextExceptions",
     "FlextResult",

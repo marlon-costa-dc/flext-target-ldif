@@ -4,24 +4,25 @@ from __future__ import annotations
 
 from pathlib import Path
 
-# MIGRATED: BatchSink now consolidated in flext-meltano
-from flext_meltano import BatchSink, Target
-
+# Use available flext-meltano abstractions
 from flext_target_ldif.writer import LdifWriter
 
 
-class LDIFSink(BatchSink):
+class LDIFSink:
     """Singer sink for writing records to LDIF format."""
 
     def __init__(
         self,
-        target: Target,
+        target_config: dict[str, object],
         stream_name: str,
         schema: dict[str, object],
         key_properties: list[str] | None = None,
     ) -> None:
         """Initialize the LDIF sink."""
-        super().__init__(target, stream_name, schema, key_properties)
+        self.config = target_config
+        self.stream_name = stream_name
+        self.schema = schema
+        self.key_properties = key_properties or []
 
         self._ldif_writer: LdifWriter | None = None
         self._output_file: Path | None = None
@@ -29,7 +30,10 @@ class LDIFSink(BatchSink):
     def _get_output_file(self) -> Path:
         """Get the output file path for this stream."""
         if self._output_file is None:
-            output_path = Path(self.config.get("output_path", "./output"))
+            output_path_str = self.config.get("output_path", "./output")
+            if not isinstance(output_path_str, str):
+                output_path_str = "./output"
+            output_path = Path(output_path_str)
 
             # Create safe filename from stream name
             safe_name = "".join(
@@ -47,11 +51,25 @@ class LDIFSink(BatchSink):
         """Get or create the LDIF writer for this sink."""
         if self._ldif_writer is None:
             output_file = self._get_output_file()
+
+            # Type-safe config extraction
+            ldif_options = self.config.get("ldif_options", {})
+            if not isinstance(ldif_options, dict):
+                ldif_options = {}
+
+            dn_template = self.config.get("dn_template")
+            if dn_template is not None and not isinstance(dn_template, str):
+                dn_template = None
+
+            attribute_mapping = self.config.get("attribute_mapping", {})
+            if not isinstance(attribute_mapping, dict):
+                attribute_mapping = {}
+
             self._ldif_writer = LdifWriter(
                 output_file=output_file,
-                ldif_options=self.config.get("ldif_options", {}),
-                dn_template=self.config.get("dn_template"),
-                attribute_mapping=self.config.get("attribute_mapping", {}),
+                ldif_options=ldif_options,
+                dn_template=dn_template,
+                attribute_mapping=attribute_mapping,
                 schema=self.schema,
             )
 

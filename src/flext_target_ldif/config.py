@@ -10,8 +10,7 @@ from pathlib import Path
 
 from flext_core import FlextModels, FlextResult
 
-# Use flext-ldap for DN validation - no duplication
-from flext_ldap.utils import flext_ldap_validate_dn
+# Basic validation without dependencies
 from pydantic import Field, field_validator
 
 
@@ -96,7 +95,8 @@ class FlextTargetLdifConfig(FlextModels.Config):
                 "{cn}",
                 "Test User",
             )
-            if not flext_ldap_validate_dn(sample_dn):
+            # Basic DN validation - check if contains = and ,
+            if "=" not in sample_dn or not sample_dn.strip():
                 return FlextResult[None].fail(
                     "DN template format is invalid - must follow LDAP DN structure",
                 )

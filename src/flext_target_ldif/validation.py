@@ -7,13 +7,7 @@ from __future__ import annotations
 
 import re
 
-# Use flext-ldap for LDAP-specific validation instead of duplicating
-from flext_ldap.utils import (
-    flext_ldap_sanitize_attribute_name,
-    flext_ldap_validate_attribute_name,
-    flext_ldap_validate_attribute_value,
-    flext_ldap_validate_dn,
-)
+# Use flext-ldif for LDIF-specific validation
 
 
 class ValidationError(Exception):
@@ -21,18 +15,19 @@ class ValidationError(Exception):
 
 
 def validate_dn_component(value: str) -> bool:
-    """Validate a DN component value using flext-ldap infrastructure."""
+    """Validate a DN component value."""
     if not value:
         return False
-
-    # Use flext-ldap DN validation - no need to duplicate logic
-    return flext_ldap_validate_dn(f"test={value}")
+    # Basic DN component validation
+    return bool(re.match(r"^[a-zA-Z0-9\s\-\.@_]+$", value))
 
 
 def validate_attribute_name(name: str) -> bool:
-    """Validate LDAP attribute name using flext-ldap infrastructure."""
-    # ELIMINATED DUPLICATION: Use flext-ldap validation instead of local logic
-    return flext_ldap_validate_attribute_name(name)
+    """Validate LDAP attribute name."""
+    if not name:
+        return False
+    # Basic LDAP attribute name validation
+    return bool(re.match(r"^[a-zA-Z][a-zA-Z0-9\-]*$", name))
 
 
 # Constants for validation limits
@@ -40,18 +35,18 @@ MAX_ATTRIBUTE_VALUE_LENGTH = 1000
 
 
 def validate_attribute_value(value: object) -> bool:
-    """Validate LDAP attribute value using flext-ldap infrastructure."""
-    # ELIMINATED DUPLICATION: Use flext-ldap validation instead of local logic
-    # flext_ldap_validate_attribute_value does not accept max_length; enforce locally
-    if isinstance(value, str) and len(value) > MAX_ATTRIBUTE_VALUE_LENGTH:
+    """Validate LDAP attribute value."""
+    if value is None:
         return False
-    return flext_ldap_validate_attribute_value(value)
+    if isinstance(value, str):
+        return len(value) <= MAX_ATTRIBUTE_VALUE_LENGTH
+    return True
 
 
 def sanitize_attribute_name(name: str) -> str:
-    """Sanitize field name to be LDAP-compatible using flext-ldap normalization."""
-    # Use flext-ldap normalization as base
-    normalized = flext_ldap_sanitize_attribute_name(name)
+    """Sanitize field name to be LDAP-compatible."""
+    # Basic normalization
+    normalized = name.lower().strip()
 
     # Remove invalid characters
     sanitized = re.sub(r"[^a-zA-Z0-9\-]", "", normalized)

@@ -16,7 +16,7 @@ from flext_core import (
 
 
 # Base exception class for flext-target-ldif
-class FlextTargetLdifError(FlextExceptions):
+class FlextTargetLdifError(FlextExceptions._Error):
     """Base exception for FLEXT Target LDIF errors."""
 
     def __init__(
@@ -25,14 +25,12 @@ class FlextTargetLdifError(FlextExceptions):
         **kwargs: object,
     ) -> None:
         """Initialize Target LDIF error with context."""
-        super().__init__(
-            f"Target LDIF: {message}",
-            error_code="TARGET_LDIF_ERROR",
-            context=kwargs,
-        )
+        self.message = message
+        self.context = kwargs
+        super().__init__(f"Target LDIF: {message}")
 
 
-class FlextTargetLdifTransformationError(FlextExceptions.ProcessingError):
+class FlextTargetLdifTransformationError(FlextExceptions._ProcessingError):
     """Data transformation errors."""
 
     def __init__(
@@ -114,7 +112,7 @@ class FlextTargetLdifFileError(FlextTargetLdifError):
         super().__init__(f"LDIF target file: {message}", **context)
 
 
-class FlextTargetLdifSchemaError(FlextExceptions):
+class FlextTargetLdifSchemaError(FlextExceptions._ValidationError):
     """Schema validation errors."""
 
     def __init__(
@@ -125,19 +123,11 @@ class FlextTargetLdifSchemaError(FlextExceptions):
         **kwargs: object,
     ) -> None:
         """Initialize LDIF target schema error with context."""
-        validation_details = {}
-        if field is not None:
-            validation_details["field"] = field
-
-        context = kwargs.copy()
-        if schema_name is not None:
-            context["schema_name"] = schema_name
-
-        super().__init__(
-            f"LDIF target schema: {message}",
-            validation_details=dict(validation_details) if validation_details else None,
-            context=context,
-        )
+        self.message = message
+        self.schema_name = schema_name
+        self.field = field
+        self.context = kwargs
+        super().__init__(f"LDIF target schema: {message}")
 
 
 class FlextTargetLdifErrorDetails(FlextModels):

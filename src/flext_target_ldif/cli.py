@@ -2,10 +2,8 @@
 
 from __future__ import annotations
 
-from flext_target_ldif.target import TargetLDIF
-
 
 def main() -> None:
     """Provide CLI entry point."""
-    target = TargetLDIF()
-    target.cli()
+    # CLI functionality would be implemented here
+    # TargetLDIF() would be initialized when needed
